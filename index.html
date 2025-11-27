@@ -17,29 +17,29 @@
       margin: 0;
       background: #f5f5f5;
       color: #222;
-      font-size: 15px; /* slightly smaller, inputs still big enough to stop zoom */
+      font-size: 15px;
     }
 
     .page {
       width: 100%;
       margin: 0;
-      padding: 0 12px 20px;
+      padding: 0 12px 18px;
       box-sizing: border-box;
     }
 
     header {
       background: var(--hc-navy);
       color: white;
-      padding: 14px 14px;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     header img {
-      height: 40px;
+      height: 36px;
       width: auto;
       object-fit: contain;
       background: transparent;
@@ -51,7 +51,7 @@
     }
 
     header h1 {
-      font-size: 18px;
+      font-size: 17px;
       margin: 0;
       line-height: 1.2;
     }
@@ -61,24 +61,30 @@
       opacity: 0.9;
     }
 
-    .title-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
     h2 {
-      margin: 0;
-      font-size: 20px;
+      margin: 6px 0 0 0;
+      font-size: 19px;
       font-weight: 700;
       color: var(--hc-navy);
     }
 
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+    }
+
     label {
       display: block;
-      margin-top: 0.8em;
+      margin-top: 0.7em;
       font-size: 14px;
       color: #333;
     }
@@ -86,39 +92,33 @@
     select {
       width: 100%;
       padding: 10px 10px;
-      margin-top: 0.4em;
+      margin-top: 0.35em;
       box-sizing: border-box;
       border-radius: 6px;
       border: 1px solid #bbb;
-      font-size: 17px;  /* large enough to stop zoom */
+      font-size: 17px;  /* big enough to stop zoom */
       -webkit-appearance: none;
       background-color: #fff;
     }
 
-    .note {
-      font-size: 12px;
-      color: #555;
-      margin-top: 6px;
-    }
-
     .card {
-      margin-top: 12px;
-      padding: 14px 12px;
+      margin-top: 10px;
+      padding: 12px 10px;
       border-radius: 8px;
       border: 1px solid #c3dff0;
       background: #ffffff;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .card-header {
       font-weight: 600;
       font-size: 14px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       color: var(--hc-navy);
     }
 
     .result-line {
-      margin: 4px 0;
+      margin: 3px 0;
       font-size: 14px;
     }
 
@@ -130,13 +130,13 @@
 
     .warning {
       color: #b00020;
-      margin-top: 6px;
+      margin-top: 5px;
       font-size: 13px;
     }
 
     .tenant-text {
-      margin-top: 8px;
-      padding-top: 6px;
+      margin-top: 7px;
+      padding-top: 5px;
       border-top: 1px dashed #c3dff0;
       font-size: 12px;
       color: #444;
@@ -144,16 +144,14 @@
 
     .btn-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       margin-top: 8px;
-      margin-bottom: 2px;
     }
 
     .btn {
       flex-grow: 1;
       text-align: center;
-      padding: 8px 6px;
+      padding: 7px 6px;
       border-radius: 6px;
       border: none;
       font-size: 13px;
@@ -174,13 +172,13 @@
     }
 
     .btn:active {
-      opacity: 0.8;
+      opacity: 0.85;
     }
 
     .info-inline {
       flex-grow: 0;
-      padding: 6px 8px;
       font-size: 12px;
+      padding: 5px 8px;
     }
 
     #staffInfo {
@@ -192,14 +190,13 @@
       text-align: center;
       font-size: 10px;
       color: #777;
-      padding: 6px 0 4px;
+      padding: 4px 0 2px;
     }
   </style>
 </head>
 
 <body>
   <header>
-    <!-- Uses the logo file in your repo -->
     <img src="hillcrest-logo.jpg" alt="Hillcrest Homes logo">
     <div class="title-block">
       <h1>Hillcrest Property Team</h1>
@@ -208,7 +205,7 @@
   </header>
 
   <div class="page">
-    <div class="title-row">
+    <div class="top-row">
       <h2>Condensation Calculator</h2>
       <button class="btn btn-outline info-inline" type="button" onclick="toggleStaffInfo()">
         ℹ️ Staff guidance
@@ -342,7 +339,7 @@
       </div>
     </div>
 
-    <p class="note" style="margin-top:8px;">
+    <p class="note" style="margin-top:6px;">
       Assumes the amount of moisture in the air stays the same (no extra drying or moisture added).
       Based on standard psychrometric relationships (same principle as the training chart).
     </p>
