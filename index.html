@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Hillcrest Property Team – Condensation Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
   <style>
     :root {
       --hc-blue: #009fdf;   /* light Hillcrest blue */
@@ -15,28 +17,29 @@
       margin: 0;
       background: #f5f5f5;
       color: #222;
+      font-size: 16px; /* base size – stops iPhone zooming */
     }
 
     .page {
-      max-width: 600px;
-      margin: 0 auto 40px;
-      padding: 0 16px 24px;
+      width: 100%;
+      margin: 0;
+      padding: 0 14px 30px;
       box-sizing: border-box;
     }
 
     header {
       background: var(--hc-navy);
       color: white;
-      padding: 10px 14px 10px;
+      padding: 18px 18px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 14px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     header img {
-      height: 34px;
+      height: 45px;
       width: auto;
       object-fit: contain;
       background: transparent;
@@ -48,90 +51,93 @@
     }
 
     header h1 {
-      font-size: 17px;
+      font-size: 19px;
       margin: 0;
       line-height: 1.2;
     }
 
     header span {
-      font-size: 11px;
+      font-size: 12px;
       opacity: 0.9;
     }
 
     h2 {
-      margin-top: 12px;
-      font-size: 18px;
+      margin-top: 16px;
+      font-size: 22px;
+      font-weight: 700;
       color: var(--hc-navy);
     }
 
     label {
       display: block;
-      margin-top: 0.8em;
-      font-size: 14px;
+      margin-top: 1em;
+      font-size: 15px;
       color: #333;
     }
 
     input[type="number"] {
       width: 100%;
-      padding: 7px 8px;
-      margin-top: 0.25em;
+      padding: 12px 12px;
+      margin-top: 0.5em;
       box-sizing: border-box;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      font-size: 18px;  /* large enough to stop zoom */
+      -webkit-appearance: none;
     }
 
     .note {
-      font-size: 12px;
+      font-size: 13px;
       color: #555;
     }
 
     .card {
-      margin-top: 14px;
-      padding: 12px 12px 10px;
-      border-radius: 8px;
+      margin-top: 18px;
+      padding: 18px 16px;
+      border-radius: 10px;
       border: 1px solid #c3dff0;
       background: #ffffff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
     }
 
     .card-header {
       font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 6px;
+      font-size: 15px;
+      margin-bottom: 8px;
       color: var(--hc-navy);
     }
 
     .result-line {
-      margin: 4px 0;
-      font-size: 14px;
+      margin: 6px 0;
+      font-size: 15px;
     }
 
     .big {
       font-weight: 600;
-      font-size: 15px;
+      font-size: 16px;
       color: var(--hc-navy);
     }
 
     .warning {
       color: #b00020;
-      margin-top: 6px;
-      font-size: 13px;
+      margin-top: 8px;
+      font-size: 14px;
     }
 
     .tenant-text {
-      margin-top: 10px;
-      padding-top: 6px;
+      margin-top: 12px;
+      padding-top: 8px;
       border-top: 1px dashed #c3dff0;
-      font-size: 12px;
+      font-size: 13px;
       color: #444;
     }
   </style>
 </head>
+
 <body>
   <header>
-    <!-- This matches the logo you uploaded: hillcrest-logo.jpg -->
-    <img src="hillcrest-logo.jpg" alt="Hillcrest Homes logo">
+    <!-- Uses the logo file in your repo -->
+    <img src="hillcrest-logo.jpg.jpg" alt="Hillcrest Homes logo">
     <div class="title-block">
       <h1>Hillcrest Property Team</h1>
       <span>Condensation Calculator &amp; Heating Helper</span>
@@ -187,20 +193,24 @@
       </div>
     </div>
 
-    <p class="note" style="margin-top:10px;">
+    <p class="note" style="margin-top:12px;">
       Assumes the amount of moisture in the air stays the same (no extra drying or moisture added).
       Based on standard psychrometric relationships (same principle as the training chart).
     </p>
   </div>
 
   <script>
+    // Saturation vapour pressure (kPa) over water – Tetens formula
     function satVapPressure(T) {
       return 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
     }
+
+    // Inverse of Tetens: from saturation vapour pressure (kPa) to temperature (°C)
     function tempFromSatVapPressure(es) {
       const lnTerm = Math.log(es / 0.6108);
       return (237.3 * lnTerm) / (17.27 - lnTerm);
     }
+
     function toNum(v) {
       const n = parseFloat(v);
       return isNaN(n) ? null : n;
@@ -210,6 +220,7 @@
       const t = toNum(document.getElementById("temp").value);
       const rh = toNum(document.getElementById("rh").value);
       const targetRh = toNum(document.getElementById("targetRh").value);
+
       const warningEl = document.getElementById("warning");
       const dewEl = document.getElementById("dewpoint");
       const reqEl = document.getElementById("requiredTemp");
@@ -230,14 +241,19 @@
         return;
       }
 
+      // Current saturation vapour pressure at temperature t
       const es = satVapPressure(t);
+      // Actual vapour pressure (kPa)
       const e = (rh / 100) * es;
 
+      // Dew point: where RH would be 100% with same vapour pressure
       const dewpoint = tempFromSatVapPressure(e);
 
+      // Required temp so that RH = targetRh with same vapour pressure
       const esReq = e * (100 / targetRh);
       const requiredTemp = tempFromSatVapPressure(esReq);
 
+      // RH at 20°C with same moisture (handy reference)
       const es20 = satVapPressure(20);
       const rhAt20 = (e / es20) * 100;
 
@@ -260,6 +276,7 @@
       if (e.target.matches("input")) calc();
     });
 
+    // Initial calculation with defaults
     calc();
   </script>
 </body>
