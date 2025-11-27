@@ -17,29 +17,29 @@
       margin: 0;
       background: #f5f5f5;
       color: #222;
-      font-size: 16px; /* base size – stops iPhone zooming */
+      font-size: 15px; /* slightly smaller, inputs still big enough to stop zoom */
     }
 
     .page {
       width: 100%;
       margin: 0;
-      padding: 0 14px 40px;
+      padding: 0 12px 20px;
       box-sizing: border-box;
     }
 
     header {
       background: var(--hc-navy);
       color: white;
-      padding: 18px 18px;
+      padding: 14px 14px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-      margin-bottom: 20px;
+      margin-bottom: 12px;
     }
 
     header img {
-      height: 45px;
+      height: 40px;
       width: auto;
       object-fit: contain;
       background: transparent;
@@ -51,85 +51,94 @@
     }
 
     header h1 {
-      font-size: 19px;
+      font-size: 18px;
       margin: 0;
       line-height: 1.2;
     }
 
     header span {
-      font-size: 12px;
+      font-size: 11px;
       opacity: 0.9;
     }
 
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
     h2 {
-      margin-top: 16px;
-      font-size: 22px;
+      margin: 0;
+      font-size: 20px;
       font-weight: 700;
       color: var(--hc-navy);
     }
 
     label {
       display: block;
-      margin-top: 1em;
-      font-size: 15px;
+      margin-top: 0.8em;
+      font-size: 14px;
       color: #333;
     }
 
     select {
       width: 100%;
-      padding: 12px 12px;
-      margin-top: 0.5em;
+      padding: 10px 10px;
+      margin-top: 0.4em;
       box-sizing: border-box;
       border-radius: 6px;
       border: 1px solid #bbb;
-      font-size: 18px;  /* large enough to stop zoom */
+      font-size: 17px;  /* large enough to stop zoom */
       -webkit-appearance: none;
       background-color: #fff;
     }
 
     .note {
-      font-size: 13px;
+      font-size: 12px;
       color: #555;
+      margin-top: 6px;
     }
 
     .card {
-      margin-top: 18px;
-      padding: 18px 16px;
-      border-radius: 10px;
+      margin-top: 12px;
+      padding: 14px 12px;
+      border-radius: 8px;
       border: 1px solid #c3dff0;
       background: #ffffff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
 
     .card-header {
       font-weight: 600;
-      font-size: 15px;
-      margin-bottom: 8px;
+      font-size: 14px;
+      margin-bottom: 6px;
       color: var(--hc-navy);
     }
 
     .result-line {
-      margin: 6px 0;
-      font-size: 15px;
+      margin: 4px 0;
+      font-size: 14px;
     }
 
     .big {
       font-weight: 600;
-      font-size: 16px;
+      font-size: 15px;
       color: var(--hc-navy);
     }
 
     .warning {
       color: #b00020;
-      margin-top: 8px;
-      font-size: 14px;
+      margin-top: 6px;
+      font-size: 13px;
     }
 
     .tenant-text {
-      margin-top: 12px;
-      padding-top: 8px;
+      margin-top: 8px;
+      padding-top: 6px;
       border-top: 1px dashed #c3dff0;
-      font-size: 13px;
+      font-size: 12px;
       color: #444;
     }
 
@@ -137,19 +146,20 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 12px;
-      margin-bottom: 4px;
+      margin-top: 8px;
+      margin-bottom: 2px;
     }
 
     .btn {
       flex-grow: 1;
       text-align: center;
-      padding: 10px 8px;
+      padding: 8px 6px;
       border-radius: 6px;
       border: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .btn-primary {
@@ -167,26 +177,22 @@
       opacity: 0.8;
     }
 
-    .info-toggle {
-      margin-top: 6px;
-      text-align: right;
-    }
-
-    .info-toggle button {
-      font-size: 13px;
-      padding: 6px 10px;
+    .info-inline {
+      flex-grow: 0;
+      padding: 6px 8px;
+      font-size: 12px;
     }
 
     #staffInfo {
-      margin-top: 10px;
+      margin-top: 8px;
       display: none;
     }
 
     footer {
       text-align: center;
-      font-size: 11px;
+      font-size: 10px;
       color: #777;
-      padding: 10px 0 4px;
+      padding: 6px 0 4px;
     }
   </style>
 </head>
@@ -202,18 +208,18 @@
   </header>
 
   <div class="page">
-    <h2>Condensation Calculator</h2>
+    <div class="title-row">
+      <h2>Condensation Calculator</h2>
+      <button class="btn btn-outline info-inline" type="button" onclick="toggleStaffInfo()">
+        ℹ️ Staff guidance
+      </button>
+    </div>
+
     <p class="note">
       For Hillcrest Property staff use on visits. Select the current room temperature and
       relative humidity. The tool estimates the dew point and the temperature needed
       (if no extra moisture is added or removed) to reach your target RH.
     </p>
-
-    <div class="info-toggle">
-      <button class="btn btn-outline" type="button" onclick="toggleStaffInfo()">
-        ℹ️ Staff guidance
-      </button>
-    </div>
 
     <div id="staffInfo" class="card">
       <div class="card-header">Quick staff guidance</div>
@@ -336,7 +342,7 @@
       </div>
     </div>
 
-    <p class="note" style="margin-top:12px;">
+    <p class="note" style="margin-top:8px;">
       Assumes the amount of moisture in the air stays the same (no extra drying or moisture added).
       Based on standard psychrometric relationships (same principle as the training chart).
     </p>
