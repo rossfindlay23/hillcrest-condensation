@@ -75,7 +75,7 @@
       color: #333;
     }
 
-    input[type="number"] {
+    select {
       width: 100%;
       padding: 12px 12px;
       margin-top: 0.5em;
@@ -84,6 +84,7 @@
       border: 1px solid #bbb;
       font-size: 18px;  /* large enough to stop zoom */
       -webkit-appearance: none;
+      background-color: #fff;
     }
 
     .note {
@@ -156,11 +157,6 @@
       color: #fff;
     }
 
-    .btn-secondary {
-      background: #e0e7ec;
-      color: #123;
-    }
-
     .btn-outline {
       background: transparent;
       border: 1px solid #c3dff0;
@@ -208,7 +204,7 @@
   <div class="page">
     <h2>Condensation Calculator</h2>
     <p class="note">
-      For Hillcrest Property staff use on visits. Enter the current room temperature and
+      For Hillcrest Property staff use on visits. Select the current room temperature and
       relative humidity. The tool estimates the dew point and the temperature needed
       (if no extra moisture is added or removed) to reach your target RH.
     </p>
@@ -225,7 +221,7 @@
         1. Take a reading of room temperature and relative humidity (ideally at breathing height, away from windows).
       </div>
       <div class="result-line">
-        2. Enter the values below and choose a target RH (60–65% is a good comfort and mould-prevention level).
+        2. Use the drop-downs below to select the nearest values. Keep the target RH at 60% unless there is a clear reason to change it.
       </div>
       <div class="result-line">
         3. Use the “Required temperature” result to discuss realistic heating settings with the tenant.
@@ -241,15 +237,6 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" type="button" onclick="setPreset(16, 80, 60)">
-        Preset 1: 16°C / 80% → 60%
-      </button>
-      <button class="btn btn-secondary" type="button" onclick="setPreset(18, 75, 60)">
-        Preset 2: 18°C / 75% → 60%
-      </button>
-    </div>
-
-    <div class="btn-row">
       <button class="btn btn-primary" type="button" onclick="resetForm()">
         Reset / clear values
       </button>
@@ -257,18 +244,71 @@
 
     <label>
       Current temperature (°C)
-      <input type="number" id="temp" step="0.1" value="16">
+      <select id="temp">
+        <option value="">Select temperature…</option>
+        <!-- 10–25 °C in 0.5 °C steps -->
+        <option value="10">10.0</option>
+        <option value="10.5">10.5</option>
+        <option value="11">11.0</option>
+        <option value="11.5">11.5</option>
+        <option value="12">12.0</option>
+        <option value="12.5">12.5</option>
+        <option value="13">13.0</option>
+        <option value="13.5">13.5</option>
+        <option value="14">14.0</option>
+        <option value="14.5">14.5</option>
+        <option value="15">15.0</option>
+        <option value="15.5">15.5</option>
+        <option value="16">16.0</option>
+        <option value="16.5">16.5</option>
+        <option value="17">17.0</option>
+        <option value="17.5">17.5</option>
+        <option value="18">18.0</option>
+        <option value="18.5">18.5</option>
+        <option value="19">19.0</option>
+        <option value="19.5">19.5</option>
+        <option value="20">20.0</option>
+        <option value="20.5">20.5</option>
+        <option value="21">21.0</option>
+        <option value="21.5">21.5</option>
+        <option value="22">22.0</option>
+        <option value="22.5">22.5</option>
+        <option value="23">23.0</option>
+        <option value="23.5">23.5</option>
+        <option value="24">24.0</option>
+        <option value="24.5">24.5</option>
+        <option value="25">25.0</option>
+      </select>
     </label>
 
     <label>
       Current relative humidity (%)
-      <input type="number" id="rh" step="1" value="80">
+      <select id="rh">
+        <option value="">Select RH…</option>
+        <!-- 40–90% in 5% steps -->
+        <option value="40">40%</option>
+        <option value="45">45%</option>
+        <option value="50">50%</option>
+        <option value="55">55%</option>
+        <option value="60">60%</option>
+        <option value="65">65%</option>
+        <option value="70">70%</option>
+        <option value="75">75%</option>
+        <option value="80">80%</option>
+        <option value="85">85%</option>
+        <option value="90">90%</option>
+      </select>
     </label>
 
     <label>
       Target relative humidity (%)
-      <span class="note">(60–65% is a typical comfort / mould-prevention level)</span>
-      <input type="number" id="targetRh" step="1" value="60">
+      <span class="note">(Default 60%. Only change if agreed as part of advice.)</span>
+      <select id="targetRh">
+        <option value="55">55%</option>
+        <option value="60" selected>60%</option>
+        <option value="65">65%</option>
+        <option value="70">70%</option>
+      </select>
     </label>
 
     <div id="warning" class="warning"></div>
@@ -291,7 +331,7 @@
       </div>
 
       <div class="tenant-text" id="tenantText">
-        Once you enter the values above, a simple explanation to use with the tenant
+        Once you select the values above, a simple explanation to use with the tenant
         will appear here.
       </div>
     </div>
@@ -339,7 +379,7 @@
       reqEl.textContent = "–";
       rh20El.textContent = "–";
       tenantEl.textContent =
-        "Once you enter the values above, a simple explanation to use with the tenant will appear here.";
+        "Once you select the values above, a simple explanation to use with the tenant will appear here.";
 
       if (t === null || rh === null || targetRh === null) return;
 
@@ -374,17 +414,10 @@
       }
     }
 
-    function setPreset(t, rh, targetRh) {
-      document.getElementById("temp").value = t;
-      document.getElementById("rh").value = rh;
-      document.getElementById("targetRh").value = targetRh;
-      calc();
-    }
-
     function resetForm() {
       document.getElementById("temp").value = "";
       document.getElementById("rh").value = "";
-      document.getElementById("targetRh").value = 60;
+      document.getElementById("targetRh").value = "60";
       calc();
     }
 
@@ -394,10 +427,14 @@
     }
 
     document.addEventListener("input", function (e) {
-      if (e.target.matches("input")) calc();
+      if (e.target.matches("select")) calc();
     });
 
-    // Initial calculation with defaults
+    document.addEventListener("change", function (e) {
+      if (e.target.matches("select")) calc();
+    });
+
+    // Initial state (no values selected)
     calc();
   </script>
 </body>
