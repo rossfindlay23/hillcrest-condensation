@@ -128,6 +128,14 @@
       color: var(--hc-navy);
     }
 
+    /* Highlight the required temperature value */
+    #requiredTemp {
+      background: var(--hc-light);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
     .warning {
       color: #b00020;
       margin-top: 5px;
@@ -213,9 +221,8 @@
     </div>
 
     <p class="note">
-      For Hillcrest Property staff use on visits. Select the current room temperature and
-      relative humidity. The tool estimates the dew point and the temperature needed
-      (if no extra moisture is added or removed) to reach your target RH.
+      For Hillcrest Property staff on visits. Select the room temperature and relative humidity
+      to estimate the dew point and the temperature needed to reach the target RH.
     </p>
 
     <div id="staffInfo" class="card">
@@ -227,7 +234,7 @@
         2. Use the drop-downs below to select the nearest values. Keep the target RH at 60% unless there is a clear reason to change it.
       </div>
       <div class="result-line">
-        3. Use the “Required temperature” result to discuss realistic heating settings with the tenant.
+        3. Use the highlighted “Required temperature” result to discuss realistic heating settings with the tenant.
       </div>
       <div class="result-line">
         4. If the required temperature is high, also stress ventilation and moisture reduction:
@@ -407,13 +414,15 @@
       if (isFinite(rhAt20)) rh20El.textContent = rhAt20.toFixed(0);
 
       if (isFinite(requiredTemp) && isFinite(rhAt20)) {
-        tenantEl.textContent =
-          "Based on a current temperature of " + t.toFixed(1) + "°C at about " +
+        // Shorter, clearer tenant wording with highlighted required temp
+        tenantEl.innerHTML =
+          "Based on the current temperature of <strong>" + t.toFixed(1) + "°C</strong> at about " +
           rh.toFixed(0) + "% humidity, heating the room to around " +
-          requiredTemp.toFixed(1) + "°C would bring the humidity down towards " +
-          targetRh.toFixed(0) + "%. If it was only heated to 20°C, the humidity would be roughly " +
+          "<strong>" + requiredTemp.toFixed(1) + "°C</strong> would bring the humidity down towards " +
+          targetRh.toFixed(0) + "%." +
+          " If the home is only heated to <strong>20°C</strong> (which is a good temperature), the humidity would be roughly " +
           rhAt20.toFixed(0) +
-          "%, so extra ventilation or reducing moisture (for example, lids on pans, drying clothes in a ventilated room, using extract fans) will still help.";
+          "%, so extra ventilation or reducing moisture (for example, lids on pans, drying clothes in a ventilated room, using extract fans) will still be important.";
       }
     }
 
