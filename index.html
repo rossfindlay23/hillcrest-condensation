@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hillcrest Property Team – Condensation Calculator</title>
+  <style>
+    :root {
+      --hc-blue: #009fdf;   /* light Hillcrest blue */
+      --hc-navy: #003b5c;   /* dark navy */
+      --hc-light: #e7f4fb;  /* pale blue background */
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .page {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      padding: 0 16px 24px;
+      box-sizing: border-box;
+    }
+
+    header {
+      background: var(--hc-navy);
+      color: white;
+      padding: 10px 14px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      margin-bottom: 16px;
+    }
+
+    header img {
+      height: 34px;
+      width: auto;
+      object-fit: contain;
+      background: transparent;
+    }
+
+    header .title-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    header h1 {
+      font-size: 17px;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    header span {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    h2 {
+      margin-top: 12px;
+      font-size: 18px;
+      color: var(--hc-navy);
+    }
+
+    label {
+      display: block;
+      margin-top: 0.8em;
+      font-size: 14px;
+      color: #333;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 7px 8px;
+      margin-top: 0.25em;
+      box-sizing: border-box;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .card {
+      margin-top: 14px;
+      padding: 12px 12px 10px;
+      border-radius: 8px;
+      border: 1px solid #c3dff0;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .card-header {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--hc-navy);
+    }
+
+    .result-line {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    .big {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--hc-navy);
+    }
+
+    .warning {
+      color: #b00020;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    .tenant-text {
+      margin-top: 10px;
+      padding-top: 6px;
+      border-top: 1px dashed #c3dff0;
+      font-size: 12px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- This matches the logo you uploaded: hillcrest-logo.jpg -->
+    <img src="hillcrest-logo.jpg" alt="Hillcrest Homes logo">
+    <div class="title-block">
+      <h1>Hillcrest Property Team</h1>
+      <span>Condensation Calculator &amp; Heating Helper</span>
+    </div>
+  </header>
+
+  <div class="page">
+    <h2>Condensation Calculator</h2>
+    <p class="note">
+      For Hillcrest Property staff use on visits. Enter the current room temperature and
+      relative humidity. The tool estimates the dew point and the temperature needed
+      (if no extra moisture is added or removed) to reach your target RH.
+    </p>
+
+    <label>
+      Current temperature (°C)
+      <input type="number" id="temp" step="0.1" value="16">
+    </label>
+
+    <label>
+      Current relative humidity (%)
+      <input type="number" id="rh" step="1" value="80">
+    </label>
+
+    <label>
+      Target relative humidity (%)
+      <span class="note">(60–65% is a typical comfort / mould-prevention level)</span>
+      <input type="number" id="targetRh" step="1" value="60">
+    </label>
+
+    <div id="warning" class="warning"></div>
+
+    <div class="card">
+      <div class="card-header">Results for this room</div>
+
+      <div class="result-line big">
+        Dew point:&nbsp;<span id="dewpoint">–</span>&nbsp;°C
+      </div>
+
+      <div class="result-line big">
+        Required temp to reach target RH:&nbsp;
+        <span id="requiredTemp">–</span>&nbsp;°C
+      </div>
+
+      <div class="result-line">
+        Estimated RH if heated to 20&nbsp;°C (no extra moisture removed):&nbsp;
+        <span id="rhAt20">–</span>&nbsp;%
+      </div>
+
+      <div class="tenant-text" id="tenantText">
+        Once you enter the values above, a simple explanation to use with the tenant
+        will appear here.
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:10px;">
+      Assumes the amount of moisture in the air stays the same (no extra drying or moisture added).
+      Based on standard psychrometric relationships (same principle as the training chart).
+    </p>
+  </div>
+
+  <script>
+    function satVapPressure(T) {
+      return 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
+    }
+    function tempFromSatVapPressure(es) {
+      const lnTerm = Math.log(es / 0.6108);
+      return (237.3 * lnTerm) / (17.27 - lnTerm);
+    }
+    function toNum(v) {
+      const n = parseFloat(v);
+      return isNaN(n) ? null : n;
+    }
+
+    function calc() {
+      const t = toNum(document.getElementById("temp").value);
+      const rh = toNum(document.getElementById("rh").value);
+      const targetRh = toNum(document.getElementById("targetRh").value);
+      const warningEl = document.getElementById("warning");
+      const dewEl = document.getElementById("dewpoint");
+      const reqEl = document.getElementById("requiredTemp");
+      const rh20El = document.getElementById("rhAt20");
+      const tenantEl = document.getElementById("tenantText");
+
+      warningEl.textContent = "";
+      dewEl.textContent = "–";
+      reqEl.textContent = "–";
+      rh20El.textContent = "–";
+      tenantEl.textContent =
+        "Once you enter the values above, a simple explanation to use with the tenant will appear here.";
+
+      if (t === null || rh === null || targetRh === null) return;
+
+      if (rh <= 0 || rh > 100 || targetRh <= 0 || targetRh > 100) {
+        warningEl.textContent = "RH values must be between 1% and 100%.";
+        return;
+      }
+
+      const es = satVapPressure(t);
+      const e = (rh / 100) * es;
+
+      const dewpoint = tempFromSatVapPressure(e);
+
+      const esReq = e * (100 / targetRh);
+      const requiredTemp = tempFromSatVapPressure(esReq);
+
+      const es20 = satVapPressure(20);
+      const rhAt20 = (e / es20) * 100;
+
+      if (isFinite(dewpoint)) dewEl.textContent = dewpoint.toFixed(1);
+      if (isFinite(requiredTemp)) reqEl.textContent = requiredTemp.toFixed(1);
+      if (isFinite(rhAt20)) rh20El.textContent = rhAt20.toFixed(0);
+
+      if (isFinite(requiredTemp) && isFinite(rhAt20)) {
+        tenantEl.textContent =
+          "Based on a current temperature of " + t.toFixed(1) + "°C at about " +
+          rh.toFixed(0) + "% humidity, heating the room to around " +
+          requiredTemp.toFixed(1) + "°C would bring the humidity down towards " +
+          targetRh.toFixed(0) + "%. If it was only heated to 20°C, the humidity would be roughly " +
+          rhAt20.toFixed(0) +
+          "%, so extra ventilation or reducing moisture (for example, lids on pans, drying clothes in a ventilated room, using extract fans) will still help.";
+      }
+    }
+
+    document.addEventListener("input", function (e) {
+      if (e.target.matches("input")) calc();
+    });
+
+    calc();
+  </script>
+</body>
+</html>
