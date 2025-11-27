@@ -23,7 +23,7 @@
     .page {
       width: 100%;
       margin: 0;
-      padding: 0 14px 30px;
+      padding: 0 14px 40px;
       box-sizing: border-box;
     }
 
@@ -131,6 +131,67 @@
       font-size: 13px;
       color: #444;
     }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+
+    .btn {
+      flex-grow: 1;
+      text-align: center;
+      padding: 10px 8px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--hc-blue);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #e0e7ec;
+      color: #123;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #c3dff0;
+      color: var(--hc-navy);
+    }
+
+    .btn:active {
+      opacity: 0.8;
+    }
+
+    .info-toggle {
+      margin-top: 6px;
+      text-align: right;
+    }
+
+    .info-toggle button {
+      font-size: 13px;
+      padding: 6px 10px;
+    }
+
+    #staffInfo {
+      margin-top: 10px;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: #777;
+      padding: 10px 0 4px;
+    }
   </style>
 </head>
 
@@ -151,6 +212,48 @@
       relative humidity. The tool estimates the dew point and the temperature needed
       (if no extra moisture is added or removed) to reach your target RH.
     </p>
+
+    <div class="info-toggle">
+      <button class="btn btn-outline" type="button" onclick="toggleStaffInfo()">
+        ℹ️ Staff guidance
+      </button>
+    </div>
+
+    <div id="staffInfo" class="card">
+      <div class="card-header">Quick staff guidance</div>
+      <div class="result-line">
+        1. Take a reading of room temperature and relative humidity (ideally at breathing height, away from windows).
+      </div>
+      <div class="result-line">
+        2. Enter the values below and choose a target RH (60–65% is a good comfort and mould-prevention level).
+      </div>
+      <div class="result-line">
+        3. Use the “Required temperature” result to discuss realistic heating settings with the tenant.
+      </div>
+      <div class="result-line">
+        4. If the required temperature is high, also stress ventilation and moisture reduction:
+        lids on pans, using extract fans, avoiding drying clothes in small unventilated rooms, etc.
+      </div>
+      <div class="result-line">
+        5. The “RH at 20°C” gives a quick sense of whether simply heating to 20°C will be enough or
+        whether extra drying/ventilation is still needed.
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" type="button" onclick="setPreset(16, 80, 60)">
+        Preset 1: 16°C / 80% → 60%
+      </button>
+      <button class="btn btn-secondary" type="button" onclick="setPreset(18, 75, 60)">
+        Preset 2: 18°C / 75% → 60%
+      </button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" type="button" onclick="resetForm()">
+        Reset / clear values
+      </button>
+    </div>
 
     <label>
       Current temperature (°C)
@@ -199,6 +302,10 @@
     </p>
   </div>
 
+  <footer>
+    Hillcrest Homes – Property Team • Condensation &amp; Heating Guidance Tool
+  </footer>
+
   <script>
     // Saturation vapour pressure (kPa) over water – Tetens formula
     function satVapPressure(T) {
@@ -241,19 +348,14 @@
         return;
       }
 
-      // Current saturation vapour pressure at temperature t
       const es = satVapPressure(t);
-      // Actual vapour pressure (kPa)
       const e = (rh / 100) * es;
 
-      // Dew point: where RH would be 100% with same vapour pressure
       const dewpoint = tempFromSatVapPressure(e);
 
-      // Required temp so that RH = targetRh with same vapour pressure
       const esReq = e * (100 / targetRh);
       const requiredTemp = tempFromSatVapPressure(esReq);
 
-      // RH at 20°C with same moisture (handy reference)
       const es20 = satVapPressure(20);
       const rhAt20 = (e / es20) * 100;
 
@@ -270,6 +372,25 @@
           rhAt20.toFixed(0) +
           "%, so extra ventilation or reducing moisture (for example, lids on pans, drying clothes in a ventilated room, using extract fans) will still help.";
       }
+    }
+
+    function setPreset(t, rh, targetRh) {
+      document.getElementById("temp").value = t;
+      document.getElementById("rh").value = rh;
+      document.getElementById("targetRh").value = targetRh;
+      calc();
+    }
+
+    function resetForm() {
+      document.getElementById("temp").value = "";
+      document.getElementById("rh").value = "";
+      document.getElementById("targetRh").value = 60;
+      calc();
+    }
+
+    function toggleStaffInfo() {
+      const el = document.getElementById("staffInfo");
+      el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
     }
 
     document.addEventListener("input", function (e) {
