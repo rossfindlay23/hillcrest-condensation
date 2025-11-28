@@ -96,7 +96,7 @@
       box-sizing: border-box;
       border-radius: 6px;
       border: 1px solid #bbb;
-      font-size: 17px;  /* big enough to stop zoom */
+      font-size: 17px;
       -webkit-appearance: none;
       background-color: #fff;
     }
@@ -128,7 +128,6 @@
       color: var(--hc-navy);
     }
 
-    /* Highlight the required temperature value */
     #requiredTemp {
       background: var(--hc-light);
       padding: 2px 8px;
@@ -179,14 +178,12 @@
       color: var(--hc-navy);
     }
 
-    .btn:active {
-      opacity: 0.85;
-    }
-
     .info-inline {
       flex-grow: 0;
-      font-size: 12px;
-      padding: 5px 8px;
+      font-size: 11px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
     }
 
     #staffInfo {
@@ -227,66 +224,36 @@
 
     <div id="staffInfo" class="card">
       <div class="card-header">Quick staff guidance</div>
-      <div class="result-line">
-        1. Take a reading of room temperature and relative humidity (ideally at breathing height, away from windows).
-      </div>
-      <div class="result-line">
-        2. Use the drop-downs below to select the nearest values. Keep the target RH at 60% unless there is a clear reason to change it.
-      </div>
-      <div class="result-line">
-        3. Use the highlighted “Required temperature” result to discuss realistic heating settings with the tenant.
-      </div>
-      <div class="result-line">
-        4. If the required temperature is high, also stress ventilation and moisture reduction:
-        lids on pans, using extract fans, avoiding drying clothes in small unventilated rooms, etc.
-      </div>
-      <div class="result-line">
-        5. The “RH at 20°C” gives a quick sense of whether simply heating to 20°C will be enough or
-        whether extra drying/ventilation is still needed.
-      </div>
+      <div class="result-line">1. Take a reading of room temperature and relative humidity.</div>
+      <div class="result-line">2. Use the drop-downs to select the nearest values. Keep target RH at 60% unless agreed otherwise.</div>
+      <div class="result-line">3. Use the highlighted “Required temperature” result to discuss heating advice.</div>
+      <div class="result-line">4. If a high temperature is needed, stress ventilation & moisture reduction.</div>
+      <div class="result-line">5. “RH at 20°C” indicates whether 20°C heating alone is enough.</div>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" type="button" onclick="resetForm()">
-        Reset / clear values
-      </button>
+      <button class="btn btn-primary" type="button" onclick="resetForm()">Reset / clear values</button>
     </div>
 
     <label>
       Current temperature (°C)
       <select id="temp">
         <option value="">Select temperature…</option>
-        <!-- 10–25 °C in 0.5 °C steps -->
-        <option value="10">10.0</option>
-        <option value="10.5">10.5</option>
-        <option value="11">11.0</option>
-        <option value="11.5">11.5</option>
-        <option value="12">12.0</option>
-        <option value="12.5">12.5</option>
-        <option value="13">13.0</option>
-        <option value="13.5">13.5</option>
-        <option value="14">14.0</option>
-        <option value="14.5">14.5</option>
-        <option value="15">15.0</option>
-        <option value="15.5">15.5</option>
-        <option value="16">16.0</option>
-        <option value="16.5">16.5</option>
-        <option value="17">17.0</option>
-        <option value="17.5">17.5</option>
-        <option value="18">18.0</option>
-        <option value="18.5">18.5</option>
-        <option value="19">19.0</option>
-        <option value="19.5">19.5</option>
-        <option value="20">20.0</option>
-        <option value="20.5">20.5</option>
-        <option value="21">21.0</option>
-        <option value="21.5">21.5</option>
-        <option value="22">22.0</option>
-        <option value="22.5">22.5</option>
-        <option value="23">23.0</option>
-        <option value="23.5">23.5</option>
-        <option value="24">24.0</option>
-        <option value="24.5">24.5</option>
+        <option value="10">10.0</option><option value="10.5">10.5</option>
+        <option value="11">11.0</option><option value="11.5">11.5</option>
+        <option value="12">12.0</option><option value="12.5">12.5</option>
+        <option value="13">13.0</option><option value="13.5">13.5</option>
+        <option value="14">14.0</option><option value="14.5">14.5</option>
+        <option value="15">15.0</option><option value="15.5">15.5</option>
+        <option value="16">16.0</option><option value="16.5">16.5</option>
+        <option value="17">17.0</option><option value="17.5">17.5</option>
+        <option value="18">18.0</option><option value="18.5">18.5</option>
+        <option value="19">19.0</option><option value="19.5">19.5</option>
+        <option value="20">20.0</option><option value="20.5">20.5</option>
+        <option value="21">21.0</option><option value="21.5">21.5</option>
+        <option value="22">22.0</option><option value="22.5">22.5</option>
+        <option value="23">23.0</option><option value="23.5">23.5</option>
+        <option value="24">24.0</option><option value="24.5">24.5</option>
         <option value="25">25.0</option>
       </select>
     </label>
@@ -295,24 +262,18 @@
       Current relative humidity (%)
       <select id="rh">
         <option value="">Select RH…</option>
-        <!-- 40–90% in 5% steps -->
-        <option value="40">40%</option>
-        <option value="45">45%</option>
-        <option value="50">50%</option>
-        <option value="55">55%</option>
-        <option value="60">60%</option>
-        <option value="65">65%</option>
-        <option value="70">70%</option>
-        <option value="75">75%</option>
-        <option value="80">80%</option>
-        <option value="85">85%</option>
+        <option value="40">40%</option><option value="45">45%</option>
+        <option value="50">50%</option><option value="55">55%</option>
+        <option value="60">60%</option><option value="65">65%</option>
+        <option value="70">70%</option><option value="75">75%</option>
+        <option value="80">80%</option><option value="85">85%</option>
         <option value="90">90%</option>
       </select>
     </label>
 
     <label>
       Target relative humidity (%)
-      <span class="note">(Default 60%. Only change if agreed as part of advice.)</span>
+      <span class="note">(Default 60%. Only change if needed.)</span>
       <select id="targetRh">
         <option value="55">55%</option>
         <option value="60" selected>60%</option>
@@ -327,28 +288,24 @@
       <div class="card-header">Results for this room</div>
 
       <div class="result-line big">
-        Dew point:&nbsp;<span id="dewpoint">–</span>&nbsp;°C
+        Dew point: <span id="dewpoint">–</span> °C
       </div>
 
       <div class="result-line big">
-        Required temp to reach target RH:&nbsp;
-        <span id="requiredTemp">–</span>&nbsp;°C
+        Required temp to reach target RH: <span id="requiredTemp">–</span> °C
       </div>
 
       <div class="result-line">
-        Estimated RH if heated to 20&nbsp;°C (no extra moisture removed):&nbsp;
-        <span id="rhAt20">–</span>&nbsp;%
+        Estimated RH if heated to 20°C: <span id="rhAt20">–</span>%
       </div>
 
       <div class="tenant-text" id="tenantText">
-        Once you select the values above, a simple explanation to use with the tenant
-        will appear here.
+        Once you select the values above, a simple explanation to use with the tenant will appear here.
       </div>
     </div>
 
     <p class="note" style="margin-top:6px;">
-      Assumes the amount of moisture in the air stays the same (no extra drying or moisture added).
-      Based on standard psychrometric relationships (same principle as the training chart).
+      Assumes moisture levels remain the same. Based on standard psychrometric relationships.
     </p>
   </div>
 
@@ -357,12 +314,10 @@
   </footer>
 
   <script>
-    // Saturation vapour pressure (kPa) over water – Tetens formula
     function satVapPressure(T) {
       return 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
     }
 
-    // Inverse of Tetens: from saturation vapour pressure (kPa) to temperature (°C)
     function tempFromSatVapPressure(es) {
       const lnTerm = Math.log(es / 0.6108);
       return (237.3 * lnTerm) / (17.27 - lnTerm);
@@ -393,19 +348,12 @@
 
       if (t === null || rh === null || targetRh === null) return;
 
-      if (rh <= 0 || rh > 100 || targetRh <= 0 || targetRh > 100) {
-        warningEl.textContent = "RH values must be between 1% and 100%.";
-        return;
-      }
-
       const es = satVapPressure(t);
       const e = (rh / 100) * es;
 
       const dewpoint = tempFromSatVapPressure(e);
-
       const esReq = e * (100 / targetRh);
       const requiredTemp = tempFromSatVapPressure(esReq);
-
       const es20 = satVapPressure(20);
       const rhAt20 = (e / es20) * 100;
 
@@ -414,15 +362,14 @@
       if (isFinite(rhAt20)) rh20El.textContent = rhAt20.toFixed(0);
 
       if (isFinite(requiredTemp) && isFinite(rhAt20)) {
-        // Shorter, clearer tenant wording with highlighted required temp
         tenantEl.innerHTML =
           "Based on the current temperature of <strong>" + t.toFixed(1) + "°C</strong> at about " +
-          rh.toFixed(0) + "% humidity, heating the room to around " +
-          "<strong>" + requiredTemp.toFixed(1) + "°C</strong> would bring the humidity down towards " +
+          rh.toFixed(0) + "% humidity, heating the room to around <strong>" +
+          requiredTemp.toFixed(1) + "°C</strong> would bring the humidity down towards " +
           targetRh.toFixed(0) + "%." +
-          " If the home is only heated to <strong>20°C</strong> (which is a good temperature), the humidity would be roughly " +
-          rhAt20.toFixed(0) +
-          "%, so extra ventilation or reducing moisture (for example, lids on pans, drying clothes in a ventilated room, using extract fans) will still be important.";
+          " If the home is heated to <strong>20°C</strong>, the humidity would be roughly " +
+          rhAt20.toFixed(0) + "%." +
+          " Ventilation measures and reducing moisture (for example, lids on pans, drying clothes in a ventilated room, using/installing dMEV extract fans) is important and will help maintain a healthy environment within the home.";
       }
     }
 
@@ -438,15 +385,14 @@
       el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
     }
 
-    document.addEventListener("input", function (e) {
+    document.addEventListener("input", e => {
       if (e.target.matches("select")) calc();
     });
 
-    document.addEventListener("change", function (e) {
+    document.addEventListener("change", e => {
       if (e.target.matches("select")) calc();
     });
 
-    // Initial state (no values selected)
     calc();
   </script>
 </body>
