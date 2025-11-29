@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hillcrest Property Team – Condensation Calculator</title>
+  <title>Condensation & Ventilation Surveyor Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <style>
     :root {
-      --hc-blue: #009fdf;
-      --hc-navy: #003b5c;
-      --hc-light: #e7f4fb;
+      --primary: #005b96;
+      --primary-light: #e5f1fb;
+      --accent: #009fdf;
     }
 
     body {
@@ -28,7 +28,7 @@
     }
 
     header {
-      background: var(--hc-navy);
+      background: var(--primary);
       color: white;
       padding: 12px 14px;
       display: flex;
@@ -38,14 +38,20 @@
       margin-bottom: 10px;
     }
 
-    header img {
-      height: 36px;
-      width: auto;
-      object-fit: contain;
-      background: transparent;
+    .app-icon {
+      height: 34px;
+      width: 34px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
     }
 
-    header .title-block {
+    .title-block {
       display: flex;
       flex-direction: column;
     }
@@ -65,7 +71,7 @@
       margin: 6px 0 0 0;
       font-size: 19px;
       font-weight: 700;
-      color: var(--hc-navy);
+      color: var(--primary);
     }
 
     .top-row {
@@ -115,7 +121,7 @@
       margin-top: 10px;
       padding: 12px 10px;
       border-radius: 8px;
-      border: 1px solid #c3dff0;
+      border: 1px solid #d2e2f0;
       background: #ffffff;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
@@ -124,7 +130,7 @@
       font-weight: 600;
       font-size: 14px;
       margin-bottom: 4px;
-      color: var(--hc-navy);
+      color: var(--primary);
     }
 
     .result-line {
@@ -135,11 +141,11 @@
     .big {
       font-weight: 600;
       font-size: 15px;
-      color: var(--hc-navy);
+      color: var(--primary);
     }
 
     #requiredTemp {
-      background: var(--hc-light);
+      background: var(--primary-light);
       padding: 2px 8px;
       border-radius: 999px;
       font-weight: 700;
@@ -154,7 +160,7 @@
     .tenant-text {
       margin-top: 7px;
       padding-top: 5px;
-      border-top: 1px dashed #c3dff0;
+      border-top: 1px dashed #d2e2f0;
       font-size: 12px;
       color: #444;
     }
@@ -179,14 +185,14 @@
     }
 
     .btn-primary {
-      background: var(--hc-blue);
+      background: var(--accent);
       color: #fff;
     }
 
     .btn-outline {
       background: transparent;
-      border: 1px solid #c3dff0;
-      color: var(--hc-navy);
+      border: 1px solid #d2e2f0;
+      color: var(--primary);
     }
 
     .info-inline {
@@ -217,7 +223,7 @@
     .saved-room-chip {
       padding: 4px 6px;
       border-radius: 999px;
-      border: 1px solid #c3dff0;
+      border: 1px solid #d2e2f0;
       background: #f0f7fb;
       font-size: 12px;
       cursor: pointer;
@@ -230,7 +236,7 @@
     .vent-section {
       margin-top: 8px;
       padding-top: 6px;
-      border-top: 1px dashed #c3dff0;
+      border-top: 1px dashed #d2e2f0;
       font-size: 13px;
     }
 
@@ -261,13 +267,6 @@
       font-weight: 600;
     }
 
-    footer {
-      text-align: center;
-      font-size: 10px;
-      color: #777;
-      padding: 4px 0 2px;
-    }
-
     #reportText {
       font-size: 12px;
       white-space: pre-wrap;
@@ -279,42 +278,49 @@
       overflow-y: auto;
       margin-top: 4px;
     }
+
+    footer {
+      text-align: center;
+      font-size: 10px;
+      color: #777;
+      padding: 4px 0 2px;
+    }
   </style>
 </head>
 
 <body>
   <header>
-    <img src="hillcrest-logo.jpg" alt="Hillcrest Homes logo">
+    <div class="app-icon">Cv</div>
     <div class="title-block">
-      <h1>Hillcrest Property Team</h1>
-      <span>Condensation Calculator &amp; Heating Helper</span>
+      <h1>Condensation & Ventilation Tool</h1>
+      <span>For surveyors, housing & retrofit assessments</span>
     </div>
   </header>
 
   <div class="page">
     <div class="top-row">
-      <h2>Condensation Calculator</h2>
+      <h2>Room moisture check</h2>
       <button class="btn btn-outline info-inline" type="button" onclick="toggleStaffInfo()">
-        ℹ️ Staff guidance
+        ℹ️ Help
       </button>
     </div>
 
     <p class="note">
-      For Hillcrest Property staff on visits. Select the room temperature and relative humidity
-      to estimate the dew point and the temperature needed to reach the target RH.
+      Estimate dew point, required heating temperature and ventilation performance to support
+      damp and mould investigations on site.
     </p>
 
     <div id="staffInfo" class="card">
-      <div class="card-header">Quick staff guidance</div>
-      <div class="result-line">1. Take a reading of room temperature and relative humidity.</div>
-      <div class="result-line">2. Use the drop-downs to select the nearest values. Keep target RH at 60% unless agreed otherwise.</div>
-      <div class="result-line">3. Use the highlighted “Required temperature” result to discuss heating advice.</div>
-      <div class="result-line">4. If a high temperature is needed, stress ventilation & moisture reduction.</div>
-      <div class="result-line">5. “RH at 20°C” indicates whether 20°C heating alone is enough.</div>
+      <div class="card-header">How to use on site</div>
+      <div class="result-line">1. Take a room temperature and RH reading using a hygrometer.</div>
+      <div class="result-line">2. Select the nearest values below. Keep target RH at 60% unless you have a specific reason to use another value.</div>
+      <div class="result-line">3. Use the highlighted “Required temperature” as part of your heating advice.</div>
+      <div class="result-line">4. Use the ventilation section to check whether the extract looks broadly adequate for the room size and type.</div>
+      <div class="result-line">5. Use the generated report text in your notes, letters or case management system.</div>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" type="button" onclick="resetForm()">Reset / clear values</button>
+      <button class="btn btn-primary" type="button" onclick="resetForm()">Reset / clear</button>
       <button class="btn btn-outline" type="button" onclick="saveRoom()">Save this room</button>
     </div>
 
@@ -356,7 +362,7 @@
 
     <label>
       Target relative humidity (%)
-      <span class="note">(Default 60%. Only change if needed.)</span>
+      <span class="note">(Typical target 60% RH.)</span>
       <select id="targetRh">
         <option value="55">55%</option>
         <option value="60" selected>60%</option>
@@ -368,7 +374,7 @@
     <div id="warning" class="warning"></div>
 
     <div class="card">
-      <div class="card-header">Results for this room</div>
+      <div class="card-header">Calculated results</div>
 
       <div class="result-line big">
         Dew point: <span id="dewpoint">–</span> °C
@@ -383,13 +389,22 @@
       </div>
 
       <div class="tenant-text" id="tenantText">
-        Once you select the values above, a simple explanation to use with the tenant will appear here.
+        Once you select the values above, a simple explanation for occupants will appear here.
       </div>
 
       <div class="vent-section">
         <div class="card-header" style="margin-bottom:4px;">Ventilation check (optional)</div>
-        <p class="note" style="margin-top:0;">
-          Enter room dimensions and extract rate. Volume is calculated automatically.
+        <label style="margin-top:0;">
+          Room type (sets target ACH)
+          <select id="roomType">
+            <option value="bed" selected>Bedroom / Living room (target ~3 ACH)</option>
+            <option value="kit">Kitchen (target ~5 ACH)</option>
+            <option value="bath">Bathroom / shower room (target ~7 ACH)</option>
+            <option value="util">Utility / drying room (target ~6 ACH)</option>
+          </select>
+        </label>
+        <p class="note" style="margin-top:2px;">
+          Enter room dimensions and extract rate. Volume is calculated automatically and used to estimate ACH.
         </p>
         <div class="vent-inline">
           <div>
@@ -431,25 +446,26 @@
 
     <div class="card" style="margin-top:10px;">
       <div class="card-header">Generated report text</div>
-      <p class="note">Use this report text in your notes, emails or case records.</p>
+      <p class="note">Copy this into your survey notes, letters or case management system.</p>
       <div id="reportText">No report generated yet.</div>
       <div class="btn-row" style="margin-top:6px;">
-        <button class="btn btn-outline" type="button" onclick="generateReport()">Generate report text</button>
+        <button class="btn btn-outline" type="button" onclick="generateReport()">Generate report</button>
         <button class="btn btn-primary" type="button" onclick="copyReport()">Copy report</button>
       </div>
     </div>
 
     <p class="note" style="margin-top:6px;">
-      Assumes moisture levels remain the same. Based on standard psychrometric relationships.
+      For professional guidance only. Assumes moisture levels remain constant during heating.
+      Based on standard psychrometric relationships.
     </p>
   </div>
 
   <footer>
-    Hillcrest Homes – Property Team • Condensation &amp; Heating Guidance Tool
+    Condensation & Ventilation Tool • © Your Name / Company
   </footer>
 
   <script>
-    const STORAGE_KEY = "hillcrest_saved_rooms_v1";
+    const STORAGE_KEY = "cvtool_saved_rooms_v1";
     let currentRoomName = "Current room";
     let lastVentSummary = "";
     let lastVolume = null;
@@ -468,6 +484,17 @@
       return isNaN(n) ? null : n;
     }
 
+    function getTargetAch() {
+      const type = document.getElementById("roomType").value;
+      switch (type) {
+        case "kit": return 5.0;
+        case "bath": return 7.0;
+        case "util": return 6.0;
+        case "bed":
+        default: return 3.0;
+      }
+    }
+
     function calc() {
       const t = toNum(document.getElementById("temp").value);
       const rh = toNum(document.getElementById("rh").value);
@@ -484,9 +511,12 @@
       reqEl.textContent = "–";
       rh20El.textContent = "–";
       tenantEl.textContent =
-        "Once you select the values above, a simple explanation to use with the tenant will appear here.";
+        "Once you select the values above, a simple explanation for occupants will appear here.";
 
-      if (t === null || rh === null || targetRh === null) return;
+      if (t === null || rh === null || targetRh === null) {
+        calcVent();
+        return;
+      }
 
       const es = satVapPressure(t);
       const e = (rh / 100) * es;
@@ -537,16 +567,22 @@
 
       const m3h = rate * 3.6; // L/s -> m³/h
       const ach = m3h / volume;
+      const targetAch = getTargetAch();
 
       let label =
         "Approx. room volume: " + volume.toFixed(1) + " m³. " +
         "Estimated ACH: " + ach.toFixed(1) + " air changes/hour. ";
 
-      if (ach >= 3) {
-        label += "This is broadly in a reasonable range for general moisture control.";
+      if (ach >= targetAch) {
+        label += "This is broadly in a reasonable range for this type of room.";
         ventEl.innerHTML = '<span class="vent-ok">' + label + "</span>";
       } else {
-        label += "This appears low – consider improving extract capacity or run-time.";
+        const requiredLs = (targetAch * volume) / 3.6; // L/s needed for target ACH
+        label +=
+          "This appears low – consider improving extract capacity or run-time. " +
+          "To achieve around " + targetAch.toFixed(1) +
+          " air changes/hour for this room type, the extract would need to be approximately " +
+          requiredLs.toFixed(1) + " L/s based on the dimensions entered.";
         ventEl.innerHTML = '<span class="vent-low">' + label + "</span>";
       }
 
@@ -558,6 +594,7 @@
       document.getElementById("rh").value = "";
       document.getElementById("targetRh").value = "60";
 
+      document.getElementById("roomType").value = "bed";
       document.getElementById("roomWidth").value = "";
       document.getElementById("roomLength").value = "";
       document.getElementById("roomHeight").value = "";
@@ -728,7 +765,8 @@
           e.target.id === "roomWidth" ||
           e.target.id === "roomLength" ||
           e.target.id === "roomHeight" ||
-          e.target.id === "extractRate"
+          e.target.id === "extractRate" ||
+          e.target.id === "roomType"
         ) {
           calcVent();
         } else {
@@ -738,7 +776,7 @@
     });
 
     document.addEventListener("change", e => {
-      if (e.target.matches("select")) calc();
+      if (e.target.matches("select") && e.target.id !== "roomType") calc();
     });
 
     calc();
