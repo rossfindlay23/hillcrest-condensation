@@ -7,9 +7,9 @@
 
   <style>
     :root {
-      --hc-blue: #009fdf;   /* light Hillcrest blue */
-      --hc-navy: #003b5c;   /* dark navy */
-      --hc-light: #e7f4fb;  /* pale blue background */
+      --hc-blue: #009fdf;
+      --hc-navy: #003b5c;
+      --hc-light: #e7f4fb;
     }
 
     body {
@@ -101,6 +101,16 @@
       background-color: #fff;
     }
 
+    input[type="number"] {
+      width: 100%;
+      padding: 8px 8px;
+      margin-top: 0.35em;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      font-size: 15px;
+    }
+
     .card {
       margin-top: 10px;
       padding: 12px 10px;
@@ -153,6 +163,7 @@
       display: flex;
       gap: 6px;
       margin-top: 8px;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -191,11 +202,82 @@
       display: none;
     }
 
+    .saved-rooms {
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    .saved-rooms-list {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .saved-room-chip {
+      padding: 4px 6px;
+      border-radius: 999px;
+      border: 1px solid #c3dff0;
+      background: #f0f7fb;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .saved-room-chip span {
+      font-weight: 600;
+    }
+
+    .vent-section {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed #c3dff0;
+      font-size: 13px;
+    }
+
+    .vent-inline {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .vent-inline > div {
+      flex: 1;
+      min-width: 40%;
+    }
+
+    .vent-result {
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .vent-ok {
+      color: #1b7f2a;
+      font-weight: 600;
+    }
+
+    .vent-low {
+      color: #b00020;
+      font-weight: 600;
+    }
+
     footer {
       text-align: center;
       font-size: 10px;
       color: #777;
       padding: 4px 0 2px;
+    }
+
+    #reportText {
+      font-size: 12px;
+      white-space: pre-wrap;
+      background: #f7f9fb;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #e0e7ec;
+      max-height: 140px;
+      overflow-y: auto;
+      margin-top: 4px;
     }
   </style>
 </head>
@@ -233,6 +315,7 @@
 
     <div class="btn-row">
       <button class="btn btn-primary" type="button" onclick="resetForm()">Reset / clear values</button>
+      <button class="btn btn-outline" type="button" onclick="saveRoom()">Save this room</button>
     </div>
 
     <label>
@@ -302,6 +385,58 @@
       <div class="tenant-text" id="tenantText">
         Once you select the values above, a simple explanation to use with the tenant will appear here.
       </div>
+
+      <div class="vent-section">
+        <div class="card-header" style="margin-bottom:4px;">Ventilation check (optional)</div>
+        <p class="note" style="margin-top:0;">
+          Enter room dimensions and extract rate. Volume is calculated automatically.
+        </p>
+        <div class="vent-inline">
+          <div>
+            <label style="margin-top:0;">
+              Width (m)
+              <input type="number" id="roomWidth" step="0.1" placeholder="e.g. 4">
+            </label>
+          </div>
+          <div>
+            <label style="margin-top:0;">
+              Length (m)
+              <input type="number" id="roomLength" step="0.1" placeholder="e.g. 3.5">
+            </label>
+          </div>
+          <div>
+            <label style="margin-top:0;">
+              Height (m)
+              <input type="number" id="roomHeight" step="0.1" placeholder="e.g. 2.4">
+            </label>
+          </div>
+          <div>
+            <label style="margin-top:0;">
+              Extract rate (L/s)
+              <input type="number" id="extractRate" step="0.1" placeholder="e.g. 15">
+            </label>
+          </div>
+        </div>
+        <div class="vent-result" id="ventResult">
+          Enter width, length, height and extract rate to estimate volume and air changes per hour (ACH).
+        </div>
+      </div>
+    </div>
+
+    <div class="saved-rooms">
+      <div class="card-header">Saved rooms on this device</div>
+      <div class="note">Tap a room to load its values back into the calculator.</div>
+      <div class="saved-rooms-list" id="savedRoomsList"></div>
+    </div>
+
+    <div class="card" style="margin-top:10px;">
+      <div class="card-header">Generated report text</div>
+      <p class="note">Use this report text in your notes, emails or case records.</p>
+      <div id="reportText">No report generated yet.</div>
+      <div class="btn-row" style="margin-top:6px;">
+        <button class="btn btn-outline" type="button" onclick="generateReport()">Generate report text</button>
+        <button class="btn btn-primary" type="button" onclick="copyReport()">Copy report</button>
+      </div>
     </div>
 
     <p class="note" style="margin-top:6px;">
@@ -314,6 +449,11 @@
   </footer>
 
   <script>
+    const STORAGE_KEY = "hillcrest_saved_rooms_v1";
+    let currentRoomName = "Current room";
+    let lastVentSummary = "";
+    let lastVolume = null;
+
     function satVapPressure(T) {
       return 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
     }
@@ -371,12 +511,61 @@
           rhAt20.toFixed(0) + "%." +
           " Ventilation measures and reducing moisture (for example, lids on pans, drying clothes in a ventilated room, using/installing dMEV extract fans) is important and will help maintain a healthy environment within the home.";
       }
+
+      calcVent();
+    }
+
+    function calcVent() {
+      const w = toNum(document.getElementById("roomWidth").value);
+      const l = toNum(document.getElementById("roomLength").value);
+      const h = toNum(document.getElementById("roomHeight").value);
+      const rate = toNum(document.getElementById("extractRate").value);
+      const ventEl = document.getElementById("ventResult");
+
+      lastVentSummary = "";
+      lastVolume = null;
+
+      if (w === null || l === null || h === null || rate === null ||
+          w <= 0 || l <= 0 || h <= 0 || rate <= 0) {
+        ventEl.textContent =
+          "Enter width, length, height and extract rate to estimate volume and air changes per hour (ACH).";
+        return;
+      }
+
+      const volume = w * l * h; // m³
+      lastVolume = volume;
+
+      const m3h = rate * 3.6; // L/s -> m³/h
+      const ach = m3h / volume;
+
+      let label =
+        "Approx. room volume: " + volume.toFixed(1) + " m³. " +
+        "Estimated ACH: " + ach.toFixed(1) + " air changes/hour. ";
+
+      if (ach >= 3) {
+        label += "This is broadly in a reasonable range for general moisture control.";
+        ventEl.innerHTML = '<span class="vent-ok">' + label + "</span>";
+      } else {
+        label += "This appears low – consider improving extract capacity or run-time.";
+        ventEl.innerHTML = '<span class="vent-low">' + label + "</span>";
+      }
+
+      lastVentSummary = label;
     }
 
     function resetForm() {
       document.getElementById("temp").value = "";
       document.getElementById("rh").value = "";
       document.getElementById("targetRh").value = "60";
+
+      document.getElementById("roomWidth").value = "";
+      document.getElementById("roomLength").value = "";
+      document.getElementById("roomHeight").value = "";
+      document.getElementById("extractRate").value = "";
+
+      document.getElementById("reportText").textContent = "No report generated yet.";
+      lastVentSummary = "";
+      lastVolume = null;
       calc();
     }
 
@@ -385,8 +574,167 @@
       el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
     }
 
+    function loadSavedRooms() {
+      const listEl = document.getElementById("savedRoomsList");
+      listEl.innerHTML = "";
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      let rooms;
+      try {
+        rooms = JSON.parse(raw);
+      } catch {
+        return;
+      }
+      if (!Array.isArray(rooms) || rooms.length === 0) return;
+
+      rooms.forEach((room, idx) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "saved-room-chip";
+        chip.innerHTML = "<span>" + room.name + "</span>";
+        chip.onclick = () => loadRoom(idx);
+        listEl.appendChild(chip);
+      });
+    }
+
+    function saveRoom() {
+      const tVal = document.getElementById("temp").value;
+      const rhVal = document.getElementById("rh").value;
+      const targetVal = document.getElementById("targetRh").value;
+      const dewVal = document.getElementById("dewpoint").textContent;
+      const reqVal = document.getElementById("requiredTemp").textContent;
+      const rh20Val = document.getElementById("rhAt20").textContent;
+
+      if (!tVal || !rhVal || !targetVal || dewVal === "–" || reqVal === "–") {
+        alert("Please select values and run the calculation before saving a room.");
+        return;
+      }
+
+      const name = prompt("Room name (e.g. Bedroom 1, Lounge):");
+      if (!name) return;
+
+      const raw = localStorage.getItem(STORAGE_KEY);
+      let rooms = [];
+      if (raw) {
+        try {
+          rooms = JSON.parse(raw) || [];
+        } catch {
+          rooms = [];
+        }
+      }
+
+      rooms.push({
+        name,
+        temp: tVal,
+        rh: rhVal,
+        targetRh: targetVal,
+        dew: dewVal,
+        requiredTemp: reqVal,
+        rhAt20: rh20Val
+      });
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(rooms));
+      currentRoomName = name;
+      loadSavedRooms();
+    }
+
+    function loadRoom(index) {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      let rooms;
+      try {
+        rooms = JSON.parse(raw);
+      } catch {
+        return;
+      }
+      const room = rooms[index];
+      if (!room) return;
+
+      document.getElementById("temp").value = room.temp;
+      document.getElementById("rh").value = room.rh;
+      document.getElementById("targetRh").value = room.targetRh;
+      currentRoomName = room.name;
+      calc();
+    }
+
+    function generateReport() {
+      const tVal = document.getElementById("temp").value;
+      const rhVal = document.getElementById("rh").value;
+      const targetVal = document.getElementById("targetRh").value;
+      const dewVal = document.getElementById("dewpoint").textContent;
+      const reqVal = document.getElementById("requiredTemp").textContent;
+      const rh20Val = document.getElementById("rhAt20").textContent;
+      const reportEl = document.getElementById("reportText");
+
+      if (!tVal || !rhVal || !targetVal || dewVal === "–" || reqVal === "–" || rh20Val === "–") {
+        alert("Please select values and run the calculation before generating a report.");
+        return;
+      }
+
+      const lines = [];
+      lines.push("Room: " + (currentRoomName || "Current room"));
+      lines.push("Temperature: " + parseFloat(tVal).toFixed(1) + " °C");
+      lines.push("Relative humidity: " + parseFloat(rhVal).toFixed(0) + " %");
+      lines.push("Target relative humidity: " + parseFloat(targetVal).toFixed(0) + " %");
+      lines.push("Dew point: " + dewVal + " °C");
+      lines.push("Required temperature to reach target RH: " + reqVal + " °C");
+      lines.push("Estimated RH if heated to 20 °C: " + rh20Val + " %");
+
+      if (lastVolume !== null) {
+        lines.push("Approx. room volume: " + lastVolume.toFixed(1) + " m³");
+      }
+
+      if (lastVentSummary) {
+        lines.push("");
+        lines.push("Ventilation:");
+        lines.push(lastVentSummary);
+      }
+
+      lines.push("");
+      lines.push(
+        "Advisory summary: Based on the current conditions, heating the room to around " +
+        reqVal + " °C would help bring humidity down towards " + parseFloat(targetVal).toFixed(0) +
+        "%. Ventilation measures and reducing moisture (for example, lids on pans, drying clothes in a ventilated room, using/installing dMEV extract fans) is important and will help maintain a healthy environment within the home."
+      );
+
+      reportEl.textContent = lines.join("\n");
+    }
+
+    function copyReport() {
+      const text = document.getElementById("reportText").textContent || "";
+      if (!text || text === "No report generated yet.") {
+        alert("Please generate a report first.");
+        return;
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => alert("Report copied to clipboard."))
+          .catch(() => alert("Could not copy automatically. Please tap and select the text manually."));
+      } else {
+        alert("Automatic copy not supported. Please tap and select the report text manually.");
+      }
+    }
+
     document.addEventListener("input", e => {
-      if (e.target.matches("select")) calc();
+      if (
+        e.target.matches("select") ||
+        e.target.matches("#roomWidth") ||
+        e.target.matches("#roomLength") ||
+        e.target.matches("#roomHeight") ||
+        e.target.matches("#extractRate")
+      ) {
+        if (
+          e.target.id === "roomWidth" ||
+          e.target.id === "roomLength" ||
+          e.target.id === "roomHeight" ||
+          e.target.id === "extractRate"
+        ) {
+          calcVent();
+        } else {
+          calc();
+        }
+      }
     });
 
     document.addEventListener("change", e => {
@@ -394,6 +742,7 @@
     });
 
     calc();
+    loadSavedRooms();
   </script>
 </body>
 </html>
