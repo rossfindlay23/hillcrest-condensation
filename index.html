@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Condensation & Ventilation Surveyor Tool</title>
+  <title>CM Toolbox – Condensation, Ventilation & Air Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <style>
@@ -10,37 +10,33 @@
       --primary: #005b96;
       --primary-light: #e5f1fb;
       --accent: #009fdf;
+      --bg: #f5f5f5;
     }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       margin: 0;
-      background: #f5f5f5;
+      background: var(--bg);
       color: #222;
       font-size: 15px;
-    }
-
-    .page {
-      width: 100%;
-      margin: 0;
-      padding: 0 12px 18px;
-      box-sizing: border-box;
     }
 
     header {
       background: var(--primary);
       color: white;
-      padding: 12px 14px;
+      padding: 10px 14px;
       display: flex;
       align-items: center;
       gap: 10px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-      margin-bottom: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     .app-icon {
-      height: 34px;
-      width: 34px;
+      height: 32px;
+      width: 32px;
       border-radius: 8px;
       border: 2px solid rgba(255,255,255,0.7);
       display: flex;
@@ -57,7 +53,7 @@
     }
 
     header h1 {
-      font-size: 17px;
+      font-size: 16px;
       margin: 0;
       line-height: 1.2;
     }
@@ -67,19 +63,18 @@
       opacity: 0.9;
     }
 
-    h2 {
-      margin: 6px 0 0 0;
-      font-size: 19px;
-      font-weight: 700;
-      color: var(--primary);
+    .page {
+      width: 100%;
+      margin: 0;
+      padding: 10px 12px 18px;
+      box-sizing: border-box;
     }
 
-    .top-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 4px;
+    h2 {
+      margin: 4px 0 4px 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
     }
 
     .note {
@@ -88,81 +83,84 @@
       margin-top: 4px;
     }
 
-    label {
-      display: block;
-      margin-top: 0.7em;
-      font-size: 14px;
-      color: #333;
+    /* TOOLBOX HOME */
+
+    .toolbox-header {
+      margin-bottom: 8px;
     }
 
-    select {
-      width: 100%;
-      padding: 10px 10px;
-      margin-top: 0.35em;
-      box-sizing: border-box;
-      border-radius: 6px;
-      border: 1px solid #bbb;
-      font-size: 17px;
-      -webkit-appearance: none;
-      background-color: #fff;
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
     }
 
-    input[type="number"] {
-      width: 100%;
-      padding: 8px 8px;
-      margin-top: 0.35em;
-      box-sizing: border-box;
-      border-radius: 6px;
-      border: 1px solid #bbb;
-      font-size: 15px;
-    }
-
-    .card {
-      margin-top: 10px;
-      padding: 12px 10px;
-      border-radius: 8px;
-      border: 1px solid #d2e2f0;
+    .tile {
       background: #ffffff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid #d2e2f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 90px;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
     }
 
-    .card-header {
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px;
-      color: var(--primary);
+    .tile:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.10);
+      border-color: var(--accent);
     }
 
-    .result-line {
-      margin: 3px 0;
-      font-size: 14px;
-    }
-
-    .big {
-      font-weight: 600;
+    .tile-title {
       font-size: 15px;
+      font-weight: 600;
       color: var(--primary);
     }
 
-    #requiredTemp {
-      background: var(--primary-light);
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-weight: 700;
-    }
-
-    .warning {
-      color: #b00020;
-      margin-top: 5px;
-      font-size: 13px;
-    }
-
-    .tenant-text {
-      margin-top: 7px;
-      padding-top: 5px;
-      border-top: 1px dashed #d2e2f0;
+    .tile-sub {
       font-size: 12px;
-      color: #444;
+      margin-top: 4px;
+      color: #555;
+    }
+
+    .tile-badge {
+      align-self: flex-start;
+      margin-top: 8px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .back-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .back-btn {
+      border: none;
+      background: transparent;
+      color: var(--primary);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 0;
+      cursor: pointer;
+    }
+
+    .back-btn span {
+      font-size: 14px;
     }
 
     .btn-row {
@@ -203,9 +201,81 @@
       margin-left: 4px;
     }
 
-    #staffInfo {
-      margin-top: 8px;
-      display: none;
+    .card {
+      margin-top: 10px;
+      padding: 12px 10px;
+      border-radius: 8px;
+      border: 1px solid #d2e2f0;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .card-header {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: var(--primary);
+    }
+
+    label {
+      display: block;
+      margin-top: 0.7em;
+      font-size: 14px;
+      color: #333;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px 10px;
+      margin-top: 0.35em;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      font-size: 17px;
+      -webkit-appearance: none;
+      background-color: #fff;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 8px 8px;
+      margin-top: 0.35em;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      font-size: 15px;
+    }
+
+    .result-line {
+      margin: 3px 0;
+      font-size: 14px;
+    }
+
+    .big {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--primary);
+    }
+
+    #requiredTemp {
+      background: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .warning {
+      color: #b00020;
+      margin-top: 5px;
+      font-size: 13px;
+    }
+
+    .tenant-text {
+      margin-top: 7px;
+      padding-top: 5px;
+      border-top: 1px dashed #d2e2f0;
+      font-size: 12px;
+      color: #444;
     }
 
     .saved-rooms {
@@ -279,38 +349,107 @@
       margin-top: 4px;
     }
 
+    /* Air test styles */
+    .inline-fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .inline-fields > div {
+      flex: 1;
+      min-width: 40%;
+    }
+
+    .airtest-highlight {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .airtest-note {
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+    }
+
     footer {
       text-align: center;
       font-size: 10px;
       color: #777;
-      padding: 4px 0 2px;
+      padding: 4px 0 6px;
     }
   </style>
 </head>
 
 <body>
   <header>
-    <div class="app-icon">Cv</div>
+    <div class="app-icon">CM</div>
     <div class="title-block">
-      <h1>Condensation & Ventilation Tool</h1>
-      <span>For surveyors, housing & retrofit assessments</span>
+      <h1>CM Toolbox</h1>
+      <span>Condensation • Ventilation • Air Test</span>
     </div>
+    <!-- Hidden logo element for PDF use – change src to your actual logo file if different -->
+    <img id="appLogo" src="cm-logo.png" alt="Logo" style="display:none;">
   </header>
 
-  <div class="page">
-    <div class="top-row">
-      <h2>Room moisture check</h2>
-      <button class="btn btn-outline info-inline" type="button" onclick="toggleStaffInfo()">
-        ℹ️ Help
+  <!-- HOME / TOOLBOX VIEW -->
+  <div id="view-home" class="page">
+    <div class="toolbox-header">
+      <h2>Toolbox</h2>
+      <p class="note">
+        Choose a tool to support on-site surveys, damp and mould visits, PAS2035 work or air-tightness assessments.
+        Designed for quick use on a phone.
+      </p>
+    </div>
+
+    <div class="tile-grid">
+      <div class="tile" onclick="showView('condensation')">
+        <div>
+          <div class="tile-title">Condensation & Ventilation</div>
+          <div class="tile-sub">
+            Dew point, target heating temperature, RH at 20°C, room volume and ACH check with PDF report.
+          </div>
+        </div>
+        <div class="tile-badge">Most used</div>
+      </div>
+
+      <div class="tile" onclick="showView('airtest')">
+        <div>
+          <div class="tile-title">Air Test / Envelope Helper</div>
+          <div class="tile-sub">
+            Approximate envelope area & volume, estimate n₅₀ and q₅₀ from test flow for simple box-shaped dwellings.
+          </div>
+        </div>
+        <div class="tile-badge">Beta</div>
+      </div>
+
+      <div class="tile" style="opacity:0.5; cursor:default;">
+        <div>
+          <div class="tile-title">Future tools</div>
+          <div class="tile-sub">
+            Space for additional CM survey tools (fabric heat loss, radiator sizing, dMEV runtime, etc.).
+          </div>
+        </div>
+        <div class="tile-badge">Coming soon</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONDENSATION TOOL VIEW -->
+  <div id="view-condensation" class="page" style="display:none;">
+    <div class="back-row">
+      <button class="back-btn" type="button" onclick="showView('home')">
+        <span>←</span> Toolbox
       </button>
     </div>
 
+    <h2>Condensation & Ventilation Tool</h2>
     <p class="note">
       Estimate dew point, required heating temperature and ventilation performance to support
       damp and mould investigations on site.
     </p>
 
-    <div id="staffInfo" class="card">
+    <div id="staffInfo" class="card" style="display:none;">
       <div class="card-header">How to use on site</div>
       <div class="result-line">1. Take a room temperature and RH reading using a hygrometer.</div>
       <div class="result-line">2. Select the nearest values below. Keep target RH at 60% unless you have a specific reason to use another value.</div>
@@ -322,6 +461,9 @@
     <div class="btn-row">
       <button class="btn btn-primary" type="button" onclick="resetForm()">Reset / clear</button>
       <button class="btn btn-outline" type="button" onclick="saveRoom()">Save this room</button>
+      <button class="btn btn-outline info-inline" type="button" onclick="toggleStaffInfo()">
+        ℹ️ Staff guidance
+      </button>
     </div>
 
     <label>
@@ -460,8 +602,90 @@
     </p>
   </div>
 
+  <!-- AIR TEST / ENVELOPE TOOL VIEW -->
+  <div id="view-airtest" class="page" style="display:none;">
+    <div class="back-row">
+      <button class="back-btn" type="button" onclick="showView('home')">
+        <span>←</span> Toolbox
+      </button>
+    </div>
+
+    <h2>Air Test / Envelope Helper (beta)</h2>
+    <p class="note">
+      Simple box-model helper for typical dwellings. Approximates envelope area and internal volume, then uses
+      measured flow at 50 Pa to estimate air permeability (q₅₀) and air changes at 50 Pa (n₅₀).
+      Always cross-check against the official test certificate.
+    </p>
+
+    <div class="card">
+      <div class="card-header">Inputs – box approximation</div>
+      <div class="inline-fields">
+        <div>
+          <label>
+            Length of building (m)
+            <input type="number" id="at_length" step="0.1" placeholder="e.g. 10">
+          </label>
+        </div>
+        <div>
+          <label>
+            Width of building (m)
+            <input type="number" id="at_width" step="0.1" placeholder="e.g. 6">
+          </label>
+        </div>
+      </div>
+
+      <div class="inline-fields">
+        <div>
+          <label>
+            Storeys (heated)
+            <input type="number" id="at_storeys" step="1" placeholder="e.g. 2">
+          </label>
+        </div>
+        <div>
+          <label>
+            Storey height (m)
+            <input type="number" id="at_height" step="0.1" placeholder="e.g. 2.4">
+          </label>
+        </div>
+      </div>
+
+      <label>
+        Measured flow at 50 Pa (m³/h)
+        <span class="note">(From test certificate – optional but needed for q₅₀ / n₅₀)</span>
+        <input type="number" id="at_flow" step="1" placeholder="e.g. 1500">
+      </label>
+
+      <p class="airtest-note">
+        Box approximation assumes a rectangular plan with flat roof. For more complex shapes
+        (L-plans, stepped roofs, attached garages) adjust dimensions or use surveyor judgement.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Calculated envelope & air-tightness</div>
+      <div class="result-line">
+        Approx. internal volume: <span class="airtest-highlight" id="at_volume">–</span> m³
+      </div>
+      <div class="result-line">
+        Approx. envelope area (incl. ground floor & roof): <span class="airtest-highlight" id="at_envelope">–</span> m²
+      </div>
+      <div class="result-line">
+        Air permeability q₅₀ (flow / area): <span class="airtest-highlight" id="at_q50">–</span> m³/(h·m²)
+      </div>
+      <div class="result-line">
+        Air changes at 50 Pa n₅₀ (flow / volume): <span class="airtest-highlight" id="at_n50">–</span> 1/h
+      </div>
+      <div class="result-line" id="at_comment"></div>
+
+      <p class="airtest-note">
+        Typical design targets for dwellings (UK) are often around 5 m³/(h·m²) at 50 Pa, but always refer to the specific
+        standard or employer requirement for the project. This tool is for quick cross-checking only.
+      </p>
+    </div>
+  </div>
+
   <footer>
-    Condensation & Ventilation Tool • © Your Name / Company
+    CM Toolbox • Condensation, Ventilation & Air Test • © Your Name / Company
   </footer>
 
   <!-- jsPDF and AutoTable for PDF generation -->
@@ -474,6 +698,17 @@
     let lastVentSummary = "";
     let lastVolume = null;
 
+    /* ---------- VIEW SWITCHING ---------- */
+    function showView(view) {
+      document.getElementById("view-home").style.display =
+        view === "home" ? "block" : "none";
+      document.getElementById("view-condensation").style.display =
+        view === "condensation" ? "block" : "none";
+      document.getElementById("view-airtest").style.display =
+        view === "airtest" ? "block" : "none";
+    }
+
+    /* ---------- PSYCHROMETRIC CORE ---------- */
     function satVapPressure(T) {
       return 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
     }
@@ -549,6 +784,7 @@
       calcVent();
     }
 
+    /* ---------- VENTILATION SECTION ---------- */
     function calcVent() {
       const w = toNum(document.getElementById("roomWidth").value);
       const l = toNum(document.getElementById("roomLength").value);
@@ -581,7 +817,7 @@
         label += "This is broadly in a reasonable range for this type of room.";
         ventEl.innerHTML = '<span class="vent-ok">' + label + "</span>";
       } else {
-        const requiredLs = (targetAch * volume) / 3.6; // L/s needed for target ACH
+        const requiredLs = (targetAch * volume) / 3.6; // L/s for target ACH
         label +=
           "This appears low – consider improving extract capacity or run-time. " +
           "To achieve around " + targetAch.toFixed(1) +
@@ -615,6 +851,7 @@
       el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
     }
 
+    /* ---------- ROOM SAVE / LOAD ---------- */
     function loadSavedRooms() {
       const listEl = document.getElementById("savedRoomsList");
       listEl.innerHTML = "";
@@ -698,6 +935,7 @@
       calc();
     }
 
+    /* ---------- REPORT TEXT ---------- */
     function generateReport() {
       const tVal = document.getElementById("temp").value;
       const rhVal = document.getElementById("rh").value;
@@ -741,6 +979,119 @@
       reportEl.textContent = lines.join("\n");
     }
 
+    /* ---------- LOGO HELPER FOR PDF ---------- */
+    async function getLogoDataUrl() {
+      const imgEl = document.getElementById("appLogo");
+      if (!imgEl || !imgEl.src) return null;
+
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = function () {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            const dataUrl = canvas.toDataURL("image/png");
+            resolve(dataUrl);
+          } catch {
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = imgEl.src;
+      });
+    }
+
+    /* ---------- MOISTURE GRAPH FOR PDF ---------- */
+    function drawMoistureGraph(doc, startY, tVal, rhVal, reqVal, targetVal, rh20Val) {
+      const marginLeft = 12;
+      const graphWidth = 130;
+      const graphHeight = 60;
+      let yTop = startY;
+      let yBottom = yTop + graphHeight;
+
+      if (yBottom > 270) {
+        doc.addPage();
+        yTop = 18;
+        yBottom = yTop + graphHeight;
+      }
+
+      const xLeft = marginLeft;
+      const xRight = xLeft + graphWidth;
+
+      doc.setDrawColor(0);
+      doc.line(xLeft, yBottom, xRight, yBottom); // X axis
+      doc.line(xLeft, yTop, xLeft, yBottom);     // Y axis
+
+      doc.setFontSize(9);
+      doc.text("Temperature (°C)", xLeft + graphWidth / 2 - 15, yBottom + 5);
+      doc.text("RH (%)", xLeft - 6, yTop - 2);
+
+      const tMin = 5, tMax = 25;
+      const rhMin = 40, rhMax = 100;
+
+      function mapX(T) {
+        const TT = Math.min(Math.max(T, tMin), tMax);
+        return xLeft + ((TT - tMin) / (tMax - tMin)) * graphWidth;
+      }
+
+      function mapY(RH) {
+        const RR = Math.min(Math.max(RH, rhMin), rhMax);
+        return yBottom - ((RR - rhMin) / (rhMax - rhMin)) * graphHeight;
+      }
+
+      doc.setFontSize(8);
+      for (let T = 5; T <= 25; T += 5) {
+        const x = mapX(T);
+        doc.line(x, yBottom, x, yBottom + 1.5);
+        doc.text(String(T), x - 2, yBottom + 4);
+      }
+      for (let RH = 40; RH <= 100; RH += 20) {
+        const y = mapY(RH);
+        doc.line(xLeft - 1.5, y, xLeft, y);
+        doc.text(String(RH), xLeft - 9, y + 2);
+      }
+
+      const haveMain =
+        isFinite(tVal) && isFinite(rhVal) &&
+        isFinite(reqVal) && isFinite(targetVal) &&
+        isFinite(rh20Val);
+
+      if (haveMain) {
+        const x1 = mapX(tVal);
+        const y1 = mapY(rhVal);
+
+        const x2 = mapX(reqVal);
+        const y2 = mapY(targetVal);
+
+        const x3 = mapX(20);
+        const y3 = mapY(rh20Val);
+
+        doc.setDrawColor(0, 91, 150);
+        doc.setLineWidth(0.4);
+        doc.line(x1, y1, x2, y2);
+
+        doc.setFillColor(0, 91, 150);
+        doc.circle(x1, y1, 1.4, "F");
+        doc.circle(x2, y2, 1.4, "F");
+
+        doc.setFillColor(0, 159, 223);
+        doc.circle(x3, y3, 1.4, "F");
+
+        doc.setFontSize(8);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Current", x1 + 1.5, y1 - 1);
+        doc.text("Req./target", x2 + 1.5, y2 - 1);
+        doc.text("20°C point", x3 + 1.5, y3 - 1);
+      }
+
+      return yBottom;
+    }
+
+    /* ---------- PDF GENERATION ---------- */
     async function downloadPdf() {
       const text = document.getElementById("reportText").textContent || "";
       if (!text || text === "No report generated yet.") {
@@ -759,22 +1110,44 @@
       const marginLeft = 12;
       let cursorY = 18;
 
-      // HEADER BRANDING
+      const logoDataUrl = await getLogoDataUrl();
+
+      // HEADER
       doc.setFillColor(0, 91, 150);
       doc.rect(0, 0, 210, 18, "F");
-      doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(16);
-      doc.text("Condensation & Ventilation Survey Report", marginLeft, 12);
+
+      if (logoDataUrl) {
+        doc.addImage(logoDataUrl, "PNG", 6, 3, 12, 12);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(15);
+        doc.text("Condensation & Ventilation Survey Report", 22, 12);
+      } else {
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text("Condensation & Ventilation Survey Report", marginLeft, 12);
+      }
+
       doc.setTextColor(0, 0, 0);
       cursorY = 28;
 
-      // TABLE 1 – INPUT CONDITIONS
       const roomName = currentRoomName || "Current room";
-      const tVal = document.getElementById("temp").value || "-";
-      const rhVal = document.getElementById("rh").value || "-";
-      const targetVal = document.getElementById("targetRh").value || "-";
+      const tValRaw = document.getElementById("temp").value || "-";
+      const rhValRaw = document.getElementById("rh").value || "-";
+      const targetValRaw = document.getElementById("targetRh").value || "-";
 
+      const dewValRaw = document.getElementById("dewpoint").textContent || "-";
+      const reqValRaw = document.getElementById("requiredTemp").textContent || "-";
+      const rh20ValRaw = document.getElementById("rhAt20").textContent || "-";
+
+      const tVal = parseFloat(tValRaw);
+      const rhVal = parseFloat(rhValRaw);
+      const targetVal = parseFloat(targetValRaw);
+      const reqVal = parseFloat(reqValRaw);
+      const rh20Val = parseFloat(rh20ValRaw);
+
+      // 1. MEASURED CONDITIONS TABLE
       doc.setFontSize(14);
       doc.text("1. Measured Conditions", marginLeft, cursorY);
       cursorY += 4;
@@ -787,19 +1160,15 @@
         head: [["Parameter", "Value"]],
         body: [
           ["Room", roomName],
-          ["Temperature", tVal + " °C"],
-          ["Relative Humidity", rhVal + " %"],
-          ["Target RH", targetVal + " %"],
+          ["Temperature", tValRaw + " °C"],
+          ["Relative Humidity", rhValRaw + " %"],
+          ["Target RH", targetValRaw + " %"],
         ]
       });
 
       cursorY = doc.lastAutoTable.finalY + 10;
 
-      // TABLE 2 – CALCULATED RESULTS
-      const dewVal = document.getElementById("dewpoint").textContent || "-";
-      const reqVal = document.getElementById("requiredTemp").textContent || "-";
-      const rh20Val = document.getElementById("rhAt20").textContent || "-";
-
+      // 2. CALCULATED RESULTS TABLE
       doc.setFontSize(14);
       doc.text("2. Calculated Moisture Results", marginLeft, cursorY);
       cursorY += 4;
@@ -811,15 +1180,15 @@
         styles: { fontSize: 11 },
         head: [["Result", "Value"]],
         body: [
-          ["Dew Point", dewVal + " °C"],
-          ["Required Temperature for Target RH", reqVal + " °C"],
-          ["Estimated RH at 20°C", rh20Val + " %"],
+          ["Dew Point", dewValRaw + " °C"],
+          ["Required Temperature for Target RH", reqValRaw + " °C"],
+          ["Estimated RH at 20°C", rh20ValRaw + " %"],
         ]
       });
 
       cursorY = doc.lastAutoTable.finalY + 10;
 
-      // TABLE 3 – VENTILATION RESULTS
+      // 3. VENTILATION TABLE
       if (lastVolume !== null) {
         const roomTypeText = document.getElementById("roomType")
           .selectedOptions[0].textContent;
@@ -844,47 +1213,143 @@
           ]
         });
 
-        cursorY = doc.lastAutoTable.finalY + 12;
+        cursorY = doc.lastAutoTable.finalY + 10;
       }
 
-      // SECTION 4 – PROFESSIONAL GUIDANCE
+      // 4. Moisture behaviour graph
       doc.setFontSize(14);
-      doc.text("4. Professional Guidance Summary", marginLeft, cursorY);
+      doc.text("4. Moisture behaviour example (illustrative)", marginLeft, cursorY);
+      cursorY += 4;
+
+      const graphBottomY = drawMoistureGraph(
+        doc,
+        cursorY,
+        tVal,
+        rhVal,
+        reqVal,
+        targetVal,
+        rh20Val
+      );
+
+      cursorY = graphBottomY + 6;
+
+      doc.setFontSize(10);
+      const maxWidth = 180;
+      const expl1 = doc.splitTextToSize(
+        "The graph illustrates how, for a constant amount of moisture in the air, " +
+        "increasing the air temperature lowers the relative humidity. The line between the current " +
+        "condition and the required temperature point follows a constant moisture line on a psychrometric chart.",
+        maxWidth
+      );
+      doc.text(expl1, marginLeft, cursorY);
+      cursorY += expl1.length * 4 + 4;
+
+      // 5. Technical basis & guidance
+      if (cursorY > 260) {
+        doc.addPage();
+        cursorY = 18;
+      }
+
+      doc.setFontSize(14);
+      doc.text("5. Technical basis and guidance", marginLeft, cursorY);
       cursorY += 6;
 
-      const guidelines = [
-        "• Heating the room to " +
-          reqVal + "°C will help bring humidity toward the target level.",
-        "• Maintaining adequate ventilation is essential to avoiding recurring moisture issues.",
-        "• Reduce moisture sources where possible:",
-        "  – Use pan lids when cooking",
-        "  – Ensure extract fans operate effectively",
-        "  – Dry clothes outdoors or in a ventilated space",
-        "  – Avoid drying clothes on radiators",
-        "• Monitoring temperatures and RH helps maintain a healthy indoor environment."
+      doc.setFontSize(11);
+      const technicalLines = [
+        "• Dew point is calculated using standard saturation vapour pressure relationships (Magnus-type equation) from the measured temperature and relative humidity.",
+        "• Required temperature for the target RH assumes moisture content stays broadly constant while the air is heated.",
+        "• The estimated RH at 20°C shows what the relative humidity would be if the air were warmed to 20°C without adding or removing moisture.",
+        "• Ventilation performance is expressed as air changes per hour (ACH), using the room volume and extract rate in litres/second.",
+        "• Recommended ACH values vary by room type: lower in bedrooms/living rooms, higher in kitchens, bathrooms and drying spaces.",
+        "• These calculations are intended as professional guidance to support on-site judgement, not as a replacement for a full building pathology assessment."
       ];
 
-      doc.setFontSize(11);
-      const maxWidth = 180;
-
-      guidelines.forEach(line => {
-        const split = doc.splitTextToSize(line, maxWidth);
-        if (cursorY > 280) {
+      technicalLines.forEach(line => {
+        const wrapped = doc.splitTextToSize(line, maxWidth);
+        if (cursorY > 270) {
           doc.addPage();
           cursorY = 18;
         }
-        doc.text(split, marginLeft, cursorY);
-        cursorY += split.length * 5 + 2;
+        doc.text(wrapped, marginLeft, cursorY);
+        cursorY += wrapped.length * 5 + 2;
       });
 
       // FOOTER
       doc.setFontSize(9);
       doc.setTextColor(100);
-      doc.text("Generated by Condensation & Ventilation Tool • © Your Name / Company", marginLeft, 290);
+      doc.text(
+        "Generated by CM Toolbox – Condensation & Ventilation Tool • © Your Name / Company",
+        marginLeft,
+        290
+      );
 
       doc.save("condensation-ventilation-report.pdf");
     }
 
+    /* ---------- AIR TEST / ENVELOPE CALCULATOR ---------- */
+    function calcAirTest() {
+      const L = toNum(document.getElementById("at_length").value);
+      const W = toNum(document.getElementById("at_width").value);
+      const storeys = toNum(document.getElementById("at_storeys").value);
+      const H = toNum(document.getElementById("at_height").value);
+      const flow = toNum(document.getElementById("at_flow").value);
+
+      const volEl = document.getElementById("at_volume");
+      const envEl = document.getElementById("at_envelope");
+      const qEl = document.getElementById("at_q50");
+      const nEl = document.getElementById("at_n50");
+      const cEl = document.getElementById("at_comment");
+
+      volEl.textContent = "–";
+      envEl.textContent = "–";
+      qEl.textContent = "–";
+      nEl.textContent = "–";
+      cEl.textContent = "";
+
+      if (L === null || W === null || storeys === null || H === null ||
+          L <= 0 || W <= 0 || storeys <= 0 || H <= 0) {
+        cEl.textContent = "Enter length, width, storeys and storey height to estimate envelope and volume.";
+        return;
+      }
+
+      const volume = L * W * H * storeys; // m³
+      // Walls area = perimeter * height * storeys
+      const walls = 2 * (L + W) * H * storeys;
+      // Floor and roof area
+      const floorRoof = 2 * (L * W);
+      const envelope = walls + floorRoof;
+
+      volEl.textContent = volume.toFixed(1);
+      envEl.textContent = envelope.toFixed(1);
+
+      if (flow === null || flow <= 0) {
+        cEl.textContent =
+          "Approximate box-model only. Add measured flow at 50 Pa to estimate q₅₀ and n₅₀.";
+        return;
+      }
+
+      const q50 = flow / envelope;  // m³/(h·m²)
+      const n50 = flow / volume;    // 1/h
+
+      qEl.textContent = q50.toFixed(2);
+      nEl.textContent = n50.toFixed(2);
+
+      let comment = "";
+      if (q50 <= 3) {
+        comment = "Very good air-tightness for a typical dwelling. Check that background ventilation is adequate.";
+      } else if (q50 <= 5) {
+        comment = "Generally good air-tightness. Often close to modern design targets.";
+      } else if (q50 <= 10) {
+        comment = "Moderate air-tightness. May be typical of older or partially improved stock.";
+      } else {
+        comment = "Leaky envelope result. Consider if further fabric or detailing work is appropriate.";
+      }
+      comment += " Always use the official test certificate for compliance and SAP inputs.";
+
+      cEl.textContent = comment;
+    }
+
+    /* ---------- EVENT LISTENERS ---------- */
     document.addEventListener("input", e => {
       if (
         e.target.matches("select") ||
@@ -905,12 +1370,23 @@
           calc();
         }
       }
+
+      if (
+        e.target.matches("#at_length") ||
+        e.target.matches("#at_width") ||
+        e.target.matches("#at_storeys") ||
+        e.target.matches("#at_height") ||
+        e.target.matches("#at_flow")
+      ) {
+        calcAirTest();
+      }
     });
 
     document.addEventListener("change", e => {
       if (e.target.matches("select") && e.target.id !== "roomType") calc();
     });
 
+    // Initial run
     calc();
     loadSavedRooms();
   </script>
