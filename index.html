@@ -464,8 +464,9 @@
     Condensation & Ventilation Tool • © Your Name / Company
   </footer>
 
-  <!-- jsPDF for PDF generation -->
+  <!-- jsPDF and AutoTable for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
   <script>
     const STORAGE_KEY = "cvtool_saved_rooms_v1";
@@ -747,7 +748,7 @@
         return;
       }
 
-      if (!window.jspdf || !window.jspdf.jsPDF) {
+      if (!window.jspdf || !window.jspdf.jsPDF || !window.jspdf.jsPDF.API.autoTable) {
         alert("PDF library not loaded. Please check your connection and try again.");
         return;
       }
@@ -758,33 +759,128 @@
       const marginLeft = 12;
       let cursorY = 18;
 
-      // Title
+      // HEADER BRANDING
+      doc.setFillColor(0, 91, 150);
+      doc.rect(0, 0, 210, 18, "F");
+      doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("Condensation & Ventilation Survey Report", marginLeft, 12);
+      doc.setTextColor(0, 0, 0);
+      cursorY = 28;
+
+      // TABLE 1 – INPUT CONDITIONS
+      const roomName = currentRoomName || "Current room";
+      const tVal = document.getElementById("temp").value || "-";
+      const rhVal = document.getElementById("rh").value || "-";
+      const targetVal = document.getElementById("targetRh").value || "-";
+
       doc.setFontSize(14);
-      doc.text("Condensation & Ventilation Survey Report", marginLeft, cursorY);
-      cursorY += 8;
+      doc.text("1. Measured Conditions", marginLeft, cursorY);
+      cursorY += 4;
 
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-
-      const lines = text.split("\n");
-      const maxWidth = 180; // mm
-
-      lines.forEach((line) => {
-        if (!line.trim()) {
-          cursorY += 5;
-          return;
-        }
-        const split = doc.splitTextToSize(line, maxWidth);
-        split.forEach(part => {
-          if (cursorY > 280) {
-            doc.addPage();
-            cursorY = 18;
-          }
-          doc.text(part, marginLeft, cursorY);
-          cursorY += 5;
-        });
+      doc.autoTable({
+        startY: cursorY,
+        theme: "grid",
+        headStyles: { fillColor: [0, 91, 150] },
+        styles: { fontSize: 11 },
+        head: [["Parameter", "Value"]],
+        body: [
+          ["Room", roomName],
+          ["Temperature", tVal + " °C"],
+          ["Relative Humidity", rhVal + " %"],
+          ["Target RH", targetVal + " %"],
+        ]
       });
+
+      cursorY = doc.lastAutoTable.finalY + 10;
+
+      // TABLE 2 – CALCULATED RESULTS
+      const dewVal = document.getElementById("dewpoint").textContent || "-";
+      const reqVal = document.getElementById("requiredTemp").textContent || "-";
+      const rh20Val = document.getElementById("rhAt20").textContent || "-";
+
+      doc.setFontSize(14);
+      doc.text("2. Calculated Moisture Results", marginLeft, cursorY);
+      cursorY += 4;
+
+      doc.autoTable({
+        startY: cursorY,
+        theme: "grid",
+        headStyles: { fillColor: [0, 91, 150] },
+        styles: { fontSize: 11 },
+        head: [["Result", "Value"]],
+        body: [
+          ["Dew Point", dewVal + " °C"],
+          ["Required Temperature for Target RH", reqVal + " °C"],
+          ["Estimated RH at 20°C", rh20Val + " %"],
+        ]
+      });
+
+      cursorY = doc.lastAutoTable.finalY + 10;
+
+      // TABLE 3 – VENTILATION RESULTS
+      if (lastVolume !== null) {
+        const roomTypeText = document.getElementById("roomType")
+          .selectedOptions[0].textContent;
+
+        doc.setFontSize(14);
+        doc.text("3. Ventilation Performance", marginLeft, cursorY);
+        cursorY += 4;
+
+        doc.autoTable({
+          startY: cursorY,
+          theme: "grid",
+          headStyles: { fillColor: [0, 91, 150] },
+          styles: { fontSize: 11 },
+          columnStyles: {
+            1: { cellWidth: 120 }
+          },
+          head: [["Metric", "Value"]],
+          body: [
+            ["Room Type", roomTypeText],
+            ["Room Volume", lastVolume.toFixed(1) + " m³"],
+            ["Ventilation Assessment", lastVentSummary]
+          ]
+        });
+
+        cursorY = doc.lastAutoTable.finalY + 12;
+      }
+
+      // SECTION 4 – PROFESSIONAL GUIDANCE
+      doc.setFontSize(14);
+      doc.text("4. Professional Guidance Summary", marginLeft, cursorY);
+      cursorY += 6;
+
+      const guidelines = [
+        "• Heating the room to " +
+          reqVal + "°C will help bring humidity toward the target level.",
+        "• Maintaining adequate ventilation is essential to avoiding recurring moisture issues.",
+        "• Reduce moisture sources where possible:",
+        "  – Use pan lids when cooking",
+        "  – Ensure extract fans operate effectively",
+        "  – Dry clothes outdoors or in a ventilated space",
+        "  – Avoid drying clothes on radiators",
+        "• Monitoring temperatures and RH helps maintain a healthy indoor environment."
+      ];
+
+      doc.setFontSize(11);
+      const maxWidth = 180;
+
+      guidelines.forEach(line => {
+        const split = doc.splitTextToSize(line, maxWidth);
+        if (cursorY > 280) {
+          doc.addPage();
+          cursorY = 18;
+        }
+        doc.text(split, marginLeft, cursorY);
+        cursorY += split.length * 5 + 2;
+      });
+
+      // FOOTER
+      doc.setFontSize(9);
+      doc.setTextColor(100);
+      doc.text("Generated by Condensation & Ventilation Tool • © Your Name / Company", marginLeft, 290);
 
       doc.save("condensation-ventilation-report.pdf");
     }
