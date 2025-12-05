@@ -316,7 +316,7 @@
       <div class="result-line">2. Select the nearest values below. Keep target RH at 60% unless you have a specific reason to use another value.</div>
       <div class="result-line">3. Use the highlighted “Required temperature” as part of your heating advice.</div>
       <div class="result-line">4. Use the ventilation section to check whether the extract looks broadly adequate for the room size and type.</div>
-      <div class="result-line">5. Use the generated report text in your notes, letters or case management system.</div>
+      <div class="result-line">5. Use the generated report text/PDF in your notes, letters or case management system.</div>
     </div>
 
     <div class="btn-row">
@@ -446,11 +446,11 @@
 
     <div class="card" style="margin-top:10px;">
       <div class="card-header">Generated report text</div>
-      <p class="note">Copy this into your survey notes, letters or case management system.</p>
+      <p class="note">Use this text or download as PDF for your records.</p>
       <div id="reportText">No report generated yet.</div>
       <div class="btn-row" style="margin-top:6px;">
         <button class="btn btn-outline" type="button" onclick="generateReport()">Generate report</button>
-        <button class="btn btn-primary" type="button" onclick="copyReport()">Copy report</button>
+        <button class="btn btn-primary" type="button" onclick="downloadPdf()">Download PDF report</button>
       </div>
     </div>
 
@@ -463,6 +463,9 @@
   <footer>
     Condensation & Ventilation Tool • © Your Name / Company
   </footer>
+
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
     const STORAGE_KEY = "cvtool_saved_rooms_v1";
@@ -737,20 +740,53 @@
       reportEl.textContent = lines.join("\n");
     }
 
-    function copyReport() {
+    async function downloadPdf() {
       const text = document.getElementById("reportText").textContent || "";
       if (!text || text === "No report generated yet.") {
         alert("Please generate a report first.");
         return;
       }
 
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text)
-          .then(() => alert("Report copied to clipboard."))
-          .catch(() => alert("Could not copy automatically. Please tap and select the text manually."));
-      } else {
-        alert("Automatic copy not supported. Please tap and select the report text manually.");
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert("PDF library not loaded. Please check your connection and try again.");
+        return;
       }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+      const marginLeft = 12;
+      let cursorY = 18;
+
+      // Title
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text("Condensation & Ventilation Survey Report", marginLeft, cursorY);
+      cursorY += 8;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+
+      const lines = text.split("\n");
+      const maxWidth = 180; // mm
+
+      lines.forEach((line) => {
+        if (!line.trim()) {
+          cursorY += 5;
+          return;
+        }
+        const split = doc.splitTextToSize(line, maxWidth);
+        split.forEach(part => {
+          if (cursorY > 280) {
+            doc.addPage();
+            cursorY = 18;
+          }
+          doc.text(part, marginLeft, cursorY);
+          cursorY += 5;
+        });
+      });
+
+      doc.save("condensation-ventilation-report.pdf");
     }
 
     document.addEventListener("input", e => {
