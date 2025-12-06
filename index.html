@@ -236,7 +236,8 @@
       background-color: #fff;
     }
 
-    input[type="number"] {
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
       padding: 8px 8px;
       margin-top: 0.35em;
@@ -372,6 +373,61 @@
       margin-top: 4px;
     }
 
+    /* Moisture diagnosis */
+    .symptom-group {
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    .symptom-group label {
+      margin-top: 0.2em;
+      font-size: 13px;
+    }
+
+    .symptom-group input[type="checkbox"] {
+      margin-right: 4px;
+    }
+
+    .diag-heading {
+      font-weight: 600;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .diag-result-main {
+      font-weight: 600;
+      color: var(--primary);
+      margin-top: 4px;
+    }
+
+    .diag-result-secondary {
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    /* Heat loss */
+    .hl-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .hl-inline > div {
+      flex: 1;
+      min-width: 40%;
+    }
+
+    .hl-highlight {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .hl-note {
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+    }
+
     footer {
       text-align: center;
       font-size: 10px;
@@ -423,11 +479,31 @@
         <div class="tile-badge">Beta</div>
       </div>
 
+      <div class="tile" onclick="showView('moisture')">
+        <div>
+          <div class="tile-title">Moisture Diagnosis</div>
+          <div class="tile-sub">
+            Symptom-based triage to distinguish condensation, penetrating, rising and plumbing-related damp.
+          </div>
+        </div>
+        <div class="tile-badge">New</div>
+      </div>
+
+      <div class="tile" onclick="showView('heatloss')">
+        <div>
+          <div class="tile-title">Room Heat-Loss & Rad Size</div>
+          <div class="tile-sub">
+            Room dims, fabric U-values & ΔT to estimate design heat-loss and suggested radiator output.
+          </div>
+        </div>
+        <div class="tile-badge">New</div>
+      </div>
+
       <div class="tile" style="opacity:0.5; cursor:default;">
         <div>
           <div class="tile-title">Future tools</div>
           <div class="tile-sub">
-            Space for additional CM survey tools (fabric heat loss, radiator sizing, dMEV runtime, etc.).
+            Space for additional CM survey tools (fabric heat loss by whole dwelling, MVHR balancing, etc.).
           </div>
         </div>
         <div class="tile-badge">Coming soon</div>
@@ -684,8 +760,256 @@
     </div>
   </div>
 
+  <!-- MOISTURE DIAGNOSIS VIEW -->
+  <div id="view-moisture" class="page" style="display:none;">
+    <div class="back-row">
+      <button class="back-btn" type="button" onclick="showView('home')">
+        <span>←</span> Toolbox
+      </button>
+    </div>
+
+    <h2>Moisture Diagnosis Tool</h2>
+    <p class="note">
+      Symptom-based triage to help distinguish likely condensation, penetrating damp, rising damp, plumbing leaks
+      and thermal bridging issues. For professional guidance, not a replacement for full building pathology.
+    </p>
+
+    <div class="card">
+      <div class="card-header">1. Building context</div>
+      <label>
+        Approximate build type / age
+        <select id="md_age">
+          <option value="">Select…</option>
+          <option value="pre1919">Pre-1919 solid wall</option>
+          <option value="1919-1980">1919–1980 cavity / mixed</option>
+          <option value="post1980">Post-1980 cavity / insulated</option>
+          <option value="newbuild">Recent new-build / highly insulated</option>
+        </select>
+      </label>
+
+      <label>
+        Typical heating pattern
+        <select id="md_heating">
+          <option value="">Select…</option>
+          <option value="intermittent">Intermittent / off most of day</option>
+          <option value="evening">Mainly evenings</option>
+          <option value="steady">Fairly steady background heat</option>
+        </select>
+      </label>
+
+      <label>
+        Ventilation / extract fans
+        <select id="md_vent">
+          <option value="">Select…</option>
+          <option value="poor">Limited ventilation / fans rarely used</option>
+          <option value="mixed">Some ventilation, but inconsistent</option>
+          <option value="good">Generally good ventilation and extract</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="card">
+      <div class="card-header">2. Symptoms observed</div>
+
+      <div class="symptom-group">
+        <div class="diag-heading">Internal surfaces</div>
+        <label><input type="checkbox" class="md-symptom" value="mouldCorners"> Mould in corners / behind furniture / on external walls</label>
+        <label><input type="checkbox" class="md-symptom" value="windowCond"> Condensation and mould on window reveals / frames</label>
+        <label><input type="checkbox" class="md-symptom" value="ceilingEdge"> Dark staining at ceiling / wall junctions (cold edges)</label>
+        <label><input type="checkbox" class="md-symptom" value="patchMidWall"> Damp patch mid-wall, not at floor or ceiling junction</label>
+        <label><input type="checkbox" class="md-symptom" value="tideMarks"> Tide marks / salts at base of wall (up to ~1 m)</label>
+      </div>
+
+      <div class="symptom-group">
+        <div class="diag-heading">External / rain related</div>
+        <label><input type="checkbox" class="md-symptom" value="chimney"> Damp around chimney breast / unused flues</label>
+        <label><input type="checkbox" class="md-symptom" value="roofGutter"> Damp below roof line / gutters / valleys</label>
+        <label><input type="checkbox" class="md-symptom" value="exposedWall"> Damp mainly on one very exposed elevation</label>
+      </div>
+
+      <div class="symptom-group">
+        <div class="diag-heading">Plumbing / services</div>
+        <label><input type="checkbox" class="md-symptom" value="pipeLocal"> Very localised damp near pipework / bathroom / kitchen</label>
+        <label><input type="checkbox" class="md-symptom" value="aboveCeiling"> Staining on ceilings below bathroom or pipe routes</label>
+      </div>
+
+      <div class="symptom-group">
+        <div class="diag-heading">Occupancy / moisture load</div>
+        <label><input type="checkbox" class="md-symptom" value="manyOccupants"> High occupancy / lots of internal moisture (drying clothes inside, etc.)</label>
+        <label><input type="checkbox" class="md-symptom" value="coldHouse"> Property reported as hard to keep warm / often cold</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">3. Likely diagnosis</div>
+      <div class="diag-result-main" id="md_main">Select symptoms to see likely causes.</div>
+      <div class="diag-result-secondary" id="md_secondary"></div>
+      <div class="diag-result-secondary" id="md_actions" style="margin-top:6px;"></div>
+    </div>
+
+    <p class="note" style="margin-top:6px;">
+      This triage is designed to support consistent recording and explanation, not to replace a full surveyor’s judgement.
+      Multiple mechanisms can be present at the same time.
+    </p>
+  </div>
+
+  <!-- HEAT-LOSS & RADIATOR SIZING VIEW -->
+  <div id="view-heatloss" class="page" style="display:none;">
+    <div class="back-row">
+      <button class="back-btn" type="button" onclick="showView('home')">
+        <span>←</span> Toolbox
+      </button>
+    </div>
+
+    <h2>Room Heat-Loss & Radiator Sizing</h2>
+    <p class="note">
+      Quick room-level heat-loss estimate using simple U-values and a design temperature difference.
+      Intended as a guide alongside MCS / SAP / full heat-loss calculations.
+    </p>
+
+    <div class="card">
+      <div class="card-header">1. Room dimensions & design temperatures</div>
+      <label>
+        Room name (optional)
+        <input type="text" id="hl_name" placeholder="e.g. Bedroom 1">
+      </label>
+
+      <div class="hl-inline">
+        <div>
+          <label>
+            Length (m)
+            <input type="number" id="hl_length" step="0.1" placeholder="e.g. 4.2">
+          </label>
+        </div>
+        <div>
+          <label>
+            Width (m)
+            <input type="number" id="hl_width" step="0.1" placeholder="e.g. 3.3">
+          </label>
+        </div>
+      </div>
+
+      <div class="hl-inline">
+        <div>
+          <label>
+            Height (m)
+            <input type="number" id="hl_height" step="0.1" placeholder="e.g. 2.4">
+          </label>
+        </div>
+        <div>
+          <label>
+            Design internal temperature (°C)
+            <input type="number" id="hl_tint" step="0.5" placeholder="e.g. 21">
+          </label>
+        </div>
+      </div>
+
+      <label>
+        Design external temperature (°C)
+        <span class="note">(For Scottish locations often around −1 to −3°C in design calcs; adjust to preference.)</span>
+        <input type="number" id="hl_text" step="0.5" placeholder="e.g. -1">
+      </label>
+    </div>
+
+    <div class="card">
+      <div class="card-header">2. Fabric elements (simple presets)</div>
+
+      <div class="hl-inline">
+        <div>
+          <label>
+            Approx. external wall count
+            <select id="hl_extWalls">
+              <option value="1">1 external wall</option>
+              <option value="2" selected>2 external walls</option>
+              <option value="3">3 external walls</option>
+              <option value="4">4 external walls</option>
+            </select>
+          </label>
+        </div>
+        <div>
+          <label>
+            Wall U-value (W/m²K)
+            <select id="hl_uwall">
+              <option value="1.7">Solid brick/stone (uninsulated ~1.7)</option>
+              <option value="1.4">Uninsulated cavity (~1.4)</option>
+              <option value="0.6">Partially insulated (~0.6)</option>
+              <option value="0.3" selected>Modern insulated (~0.3)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="hl-inline">
+        <div>
+          <label>
+            Window / glazing area (m²)
+            <input type="number" id="hl_awin" step="0.1" placeholder="e.g. 2.5">
+          </label>
+        </div>
+        <div>
+          <label>
+            Window U-value (W/m²K)
+            <select id="hl_uwin">
+              <option value="3.0">Old double glazing (~3.0)</option>
+              <option value="1.8" selected>Modern double (~1.8)</option>
+              <option value="1.2">Better triple (~1.2)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="hl-inline">
+        <div>
+          <label>
+            Floor U-value (W/m²K)
+            <select id="hl_ufloor">
+              <option value="0.7">Uninsulated suspended (~0.7)</option>
+              <option value="0.5">Basic insulated (~0.5)</option>
+              <option value="0.25" selected>Modern insulated (~0.25)</option>
+            </select>
+          </label>
+        </div>
+        <div>
+          <label>
+            Ceiling / roof U-value (W/m²K)
+            <select id="hl_uroof">
+              <option value="0.4">Poor loft insulation (~0.4)</option>
+              <option value="0.25">Improved (~0.25)</option>
+              <option value="0.16" selected>Good loft insulation (~0.16)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <p class="hl-note">
+        Wall area is approximated from room perimeter, height and number of external walls (assuming a roughly rectangular room).
+        Floor and roof areas use the full room area.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">3. Heat-loss estimate</div>
+      <div class="result-line">
+        ΔT (inside – outside): <span class="hl-highlight" id="hl_dT">–</span> K
+      </div>
+      <div class="result-line">
+        Fabric heat-loss: <span class="hl-highlight" id="hl_Qfabric">–</span> W/K
+      </div>
+      <div class="result-line">
+        Design heat-loss (fabric × ΔT, incl. 10% margin): <span class="hl-highlight" id="hl_Qdesign">–</span> W
+      </div>
+      <div class="result-line">
+        Suggested radiator output (rounded): <span class="hl-highlight" id="hl_rad">–</span> W
+      </div>
+      <p class="hl-note">
+        Radiator outputs are usually quoted at specific temperature conditions (e.g. ΔT50). This figure is a useful sense-check
+        rather than a replacement for full heat-loss or manufacturer sizing.
+      </p>
+    </div>
+  </div>
+
   <footer>
-    CM Toolbox • Condensation, Ventilation & Air Test • © Your Name / Company
+    CM Toolbox • Condensation, Ventilation, Moisture & Air Test • © Your Name / Company
   </footer>
 
   <!-- jsPDF and AutoTable for PDF generation -->
@@ -706,6 +1030,10 @@
         view === "condensation" ? "block" : "none";
       document.getElementById("view-airtest").style.display =
         view === "airtest" ? "block" : "none";
+      document.getElementById("view-moisture").style.display =
+        view === "moisture" ? "block" : "none";
+      document.getElementById("view-heatloss").style.display =
+        view === "heatloss" ? "block" : "none";
     }
 
     /* ---------- PSYCHROMETRIC CORE ---------- */
@@ -1349,8 +1677,239 @@
       cEl.textContent = comment;
     }
 
+    /* ---------- MOISTURE DIAGNOSIS LOGIC ---------- */
+    function calcMoistureDiagnosis() {
+      const age = document.getElementById("md_age").value;
+      const heating = document.getElementById("md_heating").value;
+      const vent = document.getElementById("md_vent").value;
+
+      const symptomEls = document.querySelectorAll(".md-symptom");
+      const symptoms = [];
+      symptomEls.forEach(el => {
+        if (el.checked) symptoms.push(el.value);
+      });
+
+      const mainEl = document.getElementById("md_main");
+      const secEl = document.getElementById("md_secondary");
+      const actEl = document.getElementById("md_actions");
+
+      if (symptoms.length === 0 && !age && !heating && !vent) {
+        mainEl.textContent = "Select symptoms to see likely causes.";
+        secEl.textContent = "";
+        actEl.textContent = "";
+        return;
+      }
+
+      let scores = {
+        condensation: 0,
+        thermal: 0,
+        penetrating: 0,
+        rising: 0,
+        plumbing: 0
+      };
+
+      // Symptom scoring
+      if (symptoms.includes("mouldCorners")) {
+        scores.condensation += 3;
+        scores.thermal += 2;
+      }
+      if (symptoms.includes("windowCond")) {
+        scores.condensation += 3;
+      }
+      if (symptoms.includes("ceilingEdge")) {
+        scores.thermal += 3;
+        scores.condensation += 1;
+      }
+      if (symptoms.includes("patchMidWall")) {
+        scores.penetrating += 3;
+        scores.plumbing += 1;
+      }
+      if (symptoms.includes("tideMarks")) {
+        scores.rising += 4;
+      }
+      if (symptoms.includes("chimney")) {
+        scores.penetrating += 3;
+      }
+      if (symptoms.includes("roofGutter")) {
+        scores.penetrating += 4;
+      }
+      if (symptoms.includes("exposedWall")) {
+        scores.penetrating += 2;
+        scores.thermal += 1;
+      }
+      if (symptoms.includes("pipeLocal")) {
+        scores.plumbing += 4;
+      }
+      if (symptoms.includes("aboveCeiling")) {
+        scores.plumbing += 3;
+        scores.penetrating += 1;
+      }
+      if (symptoms.includes("manyOccupants")) {
+        scores.condensation += 3;
+      }
+      if (symptoms.includes("coldHouse")) {
+        scores.condensation += 2;
+        scores.thermal += 2;
+      }
+
+      // Context scoring
+      if (heating === "intermittent") {
+        scores.condensation += 2;
+        scores.thermal += 1;
+      } else if (heating === "evening") {
+        scores.condensation += 1;
+      }
+
+      if (vent === "poor") {
+        scores.condensation += 3;
+      } else if (vent === "mixed") {
+        scores.condensation += 1;
+      }
+
+      if (age === "pre1919") {
+        scores.rising += 1;
+        scores.penetrating += 1;
+      } else if (age === "newbuild") {
+        scores.condensation += 1;
+        scores.thermal += 1;
+      }
+
+      // Determine top causes
+      let entries = Object.entries(scores);
+      entries.sort((a, b) => b[1] - a[1]);
+      const top = entries[0];
+      const second = entries[1];
+
+      const labelMap = {
+        condensation: "Condensation-related moisture",
+        thermal: "Thermal bridging / cold surface risk",
+        penetrating: "Penetrating damp (rain / external defects)",
+        rising: "Possible rising damp",
+        plumbing: "Possible plumbing / service leak"
+      };
+
+      const explainMap = {
+        condensation:
+          "Patterns and context suggest that indoor moisture and surface temperatures are a significant factor. This often appears as mould on external walls, corners, behind furniture and around windows.",
+        thermal:
+          "There are signs of cold surface effects (thermal bridges), especially at junctions and exposed elements. These areas are more prone to condensation and mould even where the rest of the room is performing reasonably.",
+        penetrating:
+          "Symptoms are consistent with moisture tracking through the fabric from the outside, such as defective pointing, gutters, flashings, or exposed elevations.",
+        rising:
+          "Tide marks and low-level damp are consistent with moisture rising from the ground or bridging across a damp proof course. Further investigation would normally be recommended.",
+        plumbing:
+          "Localised staining near services suggests a plumbing or service-related leak. This can be intermittent and may require opening up or monitoring."
+      };
+
+      const actionsMap = {
+        condensation:
+          "Typical actions: review heating pattern, support occupants with achievable setpoints, improve ventilation (e.g. dMEV or trickle vents), move furniture away from cold walls, reduce moisture production (drying indoors, unvented tumble dryers, etc.).",
+        thermal:
+          "Typical actions: consider insulation or lining to cold elements, improve detailing at junctions, and in the interim maintain steadier temperatures and ventilation to limit surface RH at these locations.",
+        penetrating:
+          "Typical actions: inspect roof coverings, gutters, downpipes, flashings, pointing and external finishes. Address defects and check cavity trays, weep holes and sealant details around openings.",
+        rising:
+          "Typical actions: check damp proof course level, bridging by paths or raised ground, internal plaster and floor details. Consider specialist rising damp investigation if defects are not obvious.",
+        plumbing:
+          "Typical actions: trace pipe routes, inspect fittings and joints, consider moisture monitoring and, if necessary, controlled opening up to confirm and repair any leak."
+      };
+
+      let mainText = "";
+      let secondaryText = "";
+      let actionText = "";
+
+      if (!top || top[1] === 0) {
+        mainText = "Insufficient information to point strongly to one mechanism.";
+        secondaryText = "Consider gathering more detail on heating pattern, ventilation use, external defects and the exact position/shape of staining.";
+        actionText = "";
+      } else {
+        mainText = "Most likely mechanism: " + labelMap[top[0]];
+        secondaryText = explainMap[top[0]] || "";
+
+        if (second && second[1] > 0 && second[1] >= top[1] - 2) {
+          secondaryText += " A secondary contributing factor may be: " + labelMap[second[0]] + ".";
+        }
+
+        actionText = actionsMap[top[0]] || "";
+      }
+
+      mainEl.textContent = mainText;
+      secEl.textContent = secondaryText;
+      actEl.textContent = actionText;
+    }
+
+    /* ---------- HEAT-LOSS & RADIATOR SIZING ---------- */
+    function calcHeatLoss() {
+      const L = toNum(document.getElementById("hl_length").value);
+      const W = toNum(document.getElementById("hl_width").value);
+      const H = toNum(document.getElementById("hl_height").value);
+      const Tint = toNum(document.getElementById("hl_tint").value);
+      const Text = toNum(document.getElementById("hl_text").value);
+
+      const extWalls = parseInt(document.getElementById("hl_extWalls").value || "0", 10);
+      const Uwall = toNum(document.getElementById("hl_uwall").value);
+      const Awin = toNum(document.getElementById("hl_awin").value);
+      const Uwin = toNum(document.getElementById("hl_uwin").value);
+      const Ufloor = toNum(document.getElementById("hl_ufloor").value);
+      const Uroof = toNum(document.getElementById("hl_uroof").value);
+
+      const dTEl = document.getElementById("hl_dT");
+      const QfEl = document.getElementById("hl_Qfabric");
+      const QdEl = document.getElementById("hl_Qdesign");
+      const RadEl = document.getElementById("hl_rad");
+
+      dTEl.textContent = "–";
+      QfEl.textContent = "–";
+      QdEl.textContent = "–";
+      RadEl.textContent = "–";
+
+      if (L === null || W === null || H === null || Tint === null || Text === null ||
+          Uwall === null || Uwin === null || Ufloor === null || Uroof === null ||
+          L <= 0 || W <= 0 || H <= 0) {
+        return;
+      }
+
+      const dT = Tint - Text; // K
+      if (!isFinite(dT) || dT <= 0) {
+        dTEl.textContent = "–";
+        return;
+      }
+
+      const areaFloor = L * W;
+      const areaRoof = areaFloor;
+
+      const perimeter = 2 * (L + W);
+      const extFraction = Math.min(Math.max(extWalls / 4, 0), 1);
+      const areaWalls = perimeter * H * extFraction;
+
+      const AwinUse = Math.max(Awin || 0, 0);
+      const AwallNet = Math.max(areaWalls - AwinUse, 0);
+
+      const H_wall = AwallNet * Uwall;
+      const H_win = AwinUse * Uwin;
+      const H_floor = areaFloor * Ufloor;
+      const H_roof = areaRoof * Uroof;
+
+      const H_fabric = H_wall + H_win + H_floor + H_roof;
+
+      dTEl.textContent = dT.toFixed(1);
+      QfEl.textContent = H_fabric.toFixed(1);
+
+      if (!isFinite(H_fabric) || H_fabric <= 0) {
+        return;
+      }
+
+      const Q_basic = H_fabric * dT;
+      const Q_design = Q_basic * 1.1; // 10% margin
+      QdEl.textContent = Q_design.toFixed(0);
+
+      const radRounded = Math.round(Q_design / 50) * 50;
+      RadEl.textContent = radRounded.toString();
+    }
+
     /* ---------- EVENT LISTENERS ---------- */
     document.addEventListener("input", e => {
+      // Condensation tool
       if (
         e.target.matches("select") ||
         e.target.matches("#roomWidth") ||
@@ -1366,11 +1925,12 @@
           e.target.id === "roomType"
         ) {
           calcVent();
-        } else {
+        } else if (e.target.id === "temp" || e.target.id === "rh" || e.target.id === "targetRh") {
           calc();
         }
       }
 
+      // Air test
       if (
         e.target.matches("#at_length") ||
         e.target.matches("#at_width") ||
@@ -1380,10 +1940,59 @@
       ) {
         calcAirTest();
       }
+
+      // Moisture diagnosis
+      if (
+        e.target.classList.contains("md-symptom") ||
+        e.target.id === "md_age" ||
+        e.target.id === "md_heating" ||
+        e.target.id === "md_vent"
+      ) {
+        calcMoistureDiagnosis();
+      }
+
+      // Heat loss
+      if (
+        e.target.id === "hl_length" ||
+        e.target.id === "hl_width" ||
+        e.target.id === "hl_height" ||
+        e.target.id === "hl_tint" ||
+        e.target.id === "hl_text" ||
+        e.target.id === "hl_extWalls" ||
+        e.target.id === "hl_uwall" ||
+        e.target.id === "hl_awin" ||
+        e.target.id === "hl_uwin" ||
+        e.target.id === "hl_ufloor" ||
+        e.target.id === "hl_uroof"
+      ) {
+        calcHeatLoss();
+      }
     });
 
     document.addEventListener("change", e => {
-      if (e.target.matches("select") && e.target.id !== "roomType") calc();
+      if (e.target.matches("select") && e.target.id !== "roomType") {
+        if (e.target.id === "temp" || e.target.id === "rh" || e.target.id === "targetRh") {
+          calc();
+        }
+      }
+
+      if (
+        e.target.id === "md_age" ||
+        e.target.id === "md_heating" ||
+        e.target.id === "md_vent"
+      ) {
+        calcMoistureDiagnosis();
+      }
+
+      if (
+        e.target.id === "hl_extWalls" ||
+        e.target.id === "hl_uwall" ||
+        e.target.id === "hl_uwin" ||
+        e.target.id === "hl_ufloor" ||
+        e.target.id === "hl_uroof"
+      ) {
+        calcHeatLoss();
+      }
     });
 
     // Initial run
