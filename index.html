@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CM Toolbox – Condensation, Ventilation & Air Test</title>
+  <title>CM Toolbox – Condensation, Ventilation & Survey Tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <style>
@@ -428,6 +428,38 @@
       margin-top: 4px;
     }
 
+    /* Occupant advice */
+    .adv-group {
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    .adv-group label {
+      margin-top: 0.25em;
+      font-size: 13px;
+    }
+
+    .adv-group input[type="checkbox"] {
+      margin-right: 4px;
+    }
+
+    .adv-section-title {
+      font-weight: 600;
+      font-size: 13px;
+      margin-top: 6px;
+      color: var(--primary);
+    }
+
+    .adv-section-text {
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .adv-summary {
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
     footer {
       text-align: center;
       font-size: 10px;
@@ -442,7 +474,7 @@
     <div class="app-icon">CM</div>
     <div class="title-block">
       <h1>CM Toolbox</h1>
-      <span>Condensation • Ventilation • Air Test</span>
+      <span>Condensation • Ventilation • Survey Tools</span>
     </div>
     <!-- Hidden logo element for PDF use – change src to your actual logo file if different -->
     <img id="appLogo" src="cm-logo.png" alt="Logo" style="display:none;">
@@ -453,7 +485,7 @@
     <div class="toolbox-header">
       <h2>Toolbox</h2>
       <p class="note">
-        Choose a tool to support on-site surveys, damp and mould visits, PAS2035 work or air-tightness assessments.
+        Choose a tool to support on-site surveys, damp and mould visits, PAS2035 work, occupant advice or air-tightness assessments.
         Designed for quick use on a phone.
       </p>
     </div>
@@ -486,7 +518,7 @@
             Symptom-based triage to distinguish condensation, penetrating, rising and plumbing-related damp.
           </div>
         </div>
-        <div class="tile-badge">New</div>
+        <div class="tile-badge">Survey support</div>
       </div>
 
       <div class="tile" onclick="showView('heatloss')">
@@ -499,11 +531,21 @@
         <div class="tile-badge">New</div>
       </div>
 
+      <div class="tile" onclick="showView('advice')">
+        <div>
+          <div class="tile-title">Occupant Advice Generator</div>
+          <div class="tile-sub">
+            Tick observed issues and generate clear, structured advice text and a branded PDF for occupants.
+          </div>
+        </div>
+        <div class="tile-badge">New</div>
+      </div>
+
       <div class="tile" style="opacity:0.5; cursor:default;">
         <div>
           <div class="tile-title">Future tools</div>
           <div class="tile-sub">
-            Space for additional CM survey tools (fabric heat loss by whole dwelling, MVHR balancing, etc.).
+            Space for additional CM survey tools (whole dwelling ventilation, multi-room reports, etc.).
           </div>
         </div>
         <div class="tile-badge">Coming soon</div>
@@ -761,7 +803,7 @@
   </div>
 
   <!-- MOISTURE DIAGNOSIS VIEW -->
-  <div id="view-moisture" class="page" style="display:none;">
+  <div id="view-moisture" class="page" style="display:none%;">
     <div class="back-row">
       <button class="back-btn" type="button" onclick="showView('home')">
         <span>←</span> Toolbox
@@ -1008,8 +1050,116 @@
     </div>
   </div>
 
+  <!-- OCCUPANT ADVICE GENERATOR VIEW -->
+  <div id="view-advice" class="page" style="display:none;">
+    <div class="back-row">
+      <button class="back-btn" type="button" onclick="showView('home')">
+        <span>←</span> Toolbox
+      </button>
+    </div>
+
+    <h2>Occupant Advice Generator</h2>
+    <p class="note">
+      Tick the issues observed during the visit and this tool will generate clear, standardised advice text suitable
+      for letters, emails or case notes, along with a branded PDF summary.
+    </p>
+
+    <div class="card">
+      <div class="card-header">1. Property / case details (optional)</div>
+      <label>
+        Property address
+        <input type="text" id="adv_address" placeholder="e.g. 10 Example Street, Town">
+      </label>
+      <label>
+        Occupant name
+        <input type="text" id="adv_tenant" placeholder="e.g. Mr & Mrs Smith">
+      </label>
+      <label>
+        Officer / surveyor name
+        <input type="text" id="adv_officer" placeholder="e.g. Ross Findlay">
+      </label>
+      <label>
+        Visit date
+        <input type="text" id="adv_date" placeholder="e.g. 06/12/2025">
+      </label>
+    </div>
+
+    <div class="card">
+      <div class="card-header">2. Observed issues (tick all that apply)</div>
+
+      <div class="adv-group">
+        <div class="diag-heading">Heating pattern</div>
+        <label><input type="checkbox" class="adv-check" value="heat_cold"> Home reported as often cold or hard to heat</label>
+        <label><input type="checkbox" class="adv-check" value="heat_intermittent"> Heating only used for short periods (on/off pattern)</label>
+        <label><input type="checkbox" class="adv-check" value="heat_lowSetback"> Very low background temperatures between heating periods</label>
+      </div>
+
+      <div class="adv-group">
+        <div class="diag-heading">Ventilation & air movement</div>
+        <label><input type="checkbox" class="adv-check" value="vent_fansNotUsed"> Extract fans present but rarely used</label>
+        <label><input type="checkbox" class="adv-check" value="vent_fansShort"> Fans used only for very short periods</label>
+        <label><input type="checkbox" class="adv-check" value="vent_noTrickle"> Trickle vents closed or missing</label>
+        <label><input type="checkbox" class="adv-check" value="vent_windowsClosed"> Windows rarely opened for purge ventilation</label>
+      </div>
+
+      <div class="adv-group">
+        <div class="diag-heading">Moisture production</div>
+        <label><input type="checkbox" class="adv-check" value="moist_laundry"> Laundry regularly dried indoors</label>
+        <label><input type="checkbox" class="adv-check" value="moist_noLids"> Cooking without lids on pans</label>
+        <label><input type="checkbox" class="adv-check" value="moist_bathSteam"> Long baths/showers with limited ventilation</label>
+        <label><input type="checkbox" class="adv-check" value="moist_cookingLots"> High level of cooking / boiling / frying</label>
+        <label><input type="checkbox" class="adv-check" value="moist_pets"> Pets, fish tanks or other ongoing moisture sources</label>
+      </div>
+
+      <div class="adv-group">
+        <div class="diag-heading">Furniture & layout</div>
+        <label><input type="checkbox" class="adv-check" value="layout_furniture"> Large furniture tight against external walls</label>
+        <label><input type="checkbox" class="adv-check" value="layout_bedExternal"> Beds directly against cold external walls</label>
+        <label><input type="checkbox" class="adv-check" value="layout_corners"> Visible mould in cold corners or behind items</label>
+      </div>
+
+      <div class="adv-group">
+        <div class="diag-heading">Extract fan condition</div>
+        <label><input type="checkbox" class="adv-check" value="fans_weak"> Fans appear weak or under-performing</label>
+        <label><input type="checkbox" class="adv-check" value="fans_noise"> Fans are noisy and therefore often switched off</label>
+        <label><input type="checkbox" class="adv-check" value="fans_missing"> No extract fan where one would normally be expected</label>
+      </div>
+
+      <div class="adv-group">
+        <div class="diag-heading">Occupancy & fabric</div>
+        <label><input type="checkbox" class="adv-check" value="occ_high"> High occupancy for the size of the home</label>
+        <label><input type="checkbox" class="adv-check" value="thermal_bridges"> Evidence of cold bridging / cold surfaces</label>
+        <label><input type="checkbox" class="adv-check" value="thermal_poorInsul"> Limited insulation or older construction noted</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">3. Generated occupant advice</div>
+      <div id="adv_summary" class="adv-summary">
+        Select the relevant issues above to generate a summary and specific advice.
+      </div>
+
+      <div id="adv_heating"></div>
+      <div id="adv_ventilation"></div>
+      <div id="adv_moisture"></div>
+      <div id="adv_layout"></div>
+      <div id="adv_behaviour"></div>
+      <div id="adv_technical"></div>
+
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn btn-outline" type="button" onclick="resetAdviceForm()">Reset selections</button>
+        <button class="btn btn-primary" type="button" onclick="downloadAdvicePdf()">Download advice as PDF</button>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:6px;">
+      The advice generated is intended to be reasonable and practical guidance. It should be read alongside any specific
+      works, repairs or improvements being arranged by the landlord.
+    </p>
+  </div>
+
   <footer>
-    CM Toolbox • Condensation, Ventilation, Moisture & Air Test • © Your Name / Company
+    CM Toolbox • Condensation, Ventilation, Moisture, Heat Loss, Air Test & Advice • © Your Name / Company
   </footer>
 
   <!-- jsPDF and AutoTable for PDF generation -->
@@ -1021,6 +1171,7 @@
     let currentRoomName = "Current room";
     let lastVentSummary = "";
     let lastVolume = null;
+    let lastAdvice = null; // For occupant advice PDF
 
     /* ---------- VIEW SWITCHING ---------- */
     function showView(view) {
@@ -1034,6 +1185,8 @@
         view === "moisture" ? "block" : "none";
       document.getElementById("view-heatloss").style.display =
         view === "heatloss" ? "block" : "none";
+      document.getElementById("view-advice").style.display =
+        view === "advice" ? "block" : "none";
     }
 
     /* ---------- PSYCHROMETRIC CORE ---------- */
@@ -1263,7 +1416,7 @@
       calc();
     }
 
-    /* ---------- REPORT TEXT ---------- */
+    /* ---------- REPORT TEXT (CONDENSATION TOOL) ---------- */
     function generateReport() {
       const tVal = document.getElementById("temp").value;
       const rhVal = document.getElementById("rh").value;
@@ -1419,7 +1572,7 @@
       return yBottom;
     }
 
-    /* ---------- PDF GENERATION ---------- */
+    /* ---------- PDF GENERATION (CONDENSATION TOOL) ---------- */
     async function downloadPdf() {
       const text = document.getElementById("reportText").textContent || "";
       if (!text || text === "No report generated yet.") {
@@ -1641,9 +1794,7 @@
       }
 
       const volume = L * W * H * storeys; // m³
-      // Walls area = perimeter * height * storeys
       const walls = 2 * (L + W) * H * storeys;
-      // Floor and roof area
       const floorRoof = 2 * (L * W);
       const envelope = walls + floorRoof;
 
@@ -1656,8 +1807,8 @@
         return;
       }
 
-      const q50 = flow / envelope;  // m³/(h·m²)
-      const n50 = flow / volume;    // 1/h
+      const q50 = flow / envelope;
+      const n50 = flow / volume;
 
       qEl.textContent = q50.toFixed(2);
       nEl.textContent = n50.toFixed(2);
@@ -1708,7 +1859,6 @@
         plumbing: 0
       };
 
-      // Symptom scoring
       if (symptoms.includes("mouldCorners")) {
         scores.condensation += 3;
         scores.thermal += 2;
@@ -1752,7 +1902,6 @@
         scores.thermal += 2;
       }
 
-      // Context scoring
       if (heating === "intermittent") {
         scores.condensation += 2;
         scores.thermal += 1;
@@ -1774,7 +1923,6 @@
         scores.thermal += 1;
       }
 
-      // Determine top causes
       let entries = Object.entries(scores);
       entries.sort((a, b) => b[1] - a[1]);
       const top = entries[0];
@@ -1869,7 +2017,7 @@
         return;
       }
 
-      const dT = Tint - Text; // K
+      const dT = Tint - Text;
       if (!isFinite(dT) || dT <= 0) {
         dTEl.textContent = "–";
         return;
@@ -1900,16 +2048,375 @@
       }
 
       const Q_basic = H_fabric * dT;
-      const Q_design = Q_basic * 1.1; // 10% margin
+      const Q_design = Q_basic * 1.1;
       QdEl.textContent = Q_design.toFixed(0);
 
       const radRounded = Math.round(Q_design / 50) * 50;
       RadEl.textContent = radRounded.toString();
     }
 
+    /* ---------- OCCUPANT ADVICE LOGIC ---------- */
+    function buildAdviceObject() {
+      const checks = document.querySelectorAll(".adv-check");
+      const selected = [];
+      checks.forEach(el => {
+        if (el.checked) selected.push(el.value);
+      });
+
+      if (!selected.length) return null;
+
+      const hasHeating = selected.some(v => v.startsWith("heat_"));
+      const hasVent = selected.some(v => v.startsWith("vent_") || v.startsWith("fans_"));
+      const hasMoist = selected.some(v => v.startsWith("moist_"));
+      const hasLayout = selected.some(v => v.startsWith("layout_"));
+      const hasOcc = selected.includes("occ_high");
+      const hasThermal = selected.includes("thermal_bridges") || selected.includes("thermal_poorInsul");
+
+      const summaryParts = [];
+      if (hasHeating) summaryParts.push("heating pattern");
+      if (hasMoist) summaryParts.push("moisture production");
+      if (hasVent) summaryParts.push("ventilation and air movement");
+      if (hasLayout) summaryParts.push("furniture layout and cold walls");
+      if (hasOcc) summaryParts.push("higher occupancy");
+      if (hasThermal) summaryParts.push("colder construction or thermal bridges");
+
+      let summary = "Based on the issues observed during the visit, the home is experiencing conditions that increase the risk of condensation and mould.";
+      if (summaryParts.length) {
+        const list = summaryParts.join(", ").replace(/, ([^,]*)$/, " and $1");
+        summary = "Based on the issues observed during the visit, there are concerns relating to " +
+          list + ", which together can increase the risk of condensation and mould forming on cold surfaces.";
+      }
+
+      const heating = [];
+      const ventilation = [];
+      const moisture = [];
+      const layout = [];
+      const behaviour = [];
+      const technical = [];
+
+      if (selected.includes("heat_cold")) {
+        heating.push(
+          "Aim to keep the home as steady in temperature as reasonably possible, as frequent cooling and reheating increases condensation risk."
+        );
+        technical.push(
+          "A colder building fabric means surface temperatures drop closer to the dew point, so moisture in the air is more likely to condense on walls, ceilings and windows."
+        );
+      }
+      if (selected.includes("heat_intermittent")) {
+        heating.push(
+          "Where possible, use the heating for longer, steadier periods rather than short bursts on and off. A background level of heat helps reduce condensation."
+        );
+      }
+      if (selected.includes("heat_lowSetback")) {
+        heating.push(
+          "Avoid allowing the property to cool down too much between heating periods. A slightly higher background setting can help prevent cold surfaces."
+        );
+      }
+
+      if (selected.includes("vent_fansNotUsed")) {
+        ventilation.push(
+          "Make full use of kitchen and bathroom extract fans whenever cooking, showering or bathing, and leave them running for a period afterwards."
+        );
+        behaviour.push(
+          "Try to treat the fans as part of the normal routine: switch them on at the start of moisture-producing activities and keep them running until steam has cleared."
+        );
+      }
+      if (selected.includes("vent_fansShort")) {
+        ventilation.push(
+          "Increase fan run-times so that moisture is fully removed after cooking or showering. Where fitted, overrun timers should be allowed to complete."
+        );
+      }
+      if (selected.includes("vent_noTrickle")) {
+        ventilation.push(
+          "Keep trickle vents open where fitted to allow a small, steady flow of fresh air, particularly in bedrooms and living areas."
+        );
+      }
+      if (selected.includes("vent_windowsClosed")) {
+        ventilation.push(
+          "Use short, sharp window opening (for example 5–10 minutes) to purge stale, moist air, especially after cooking, showering or drying clothes."
+        );
+      }
+
+      if (selected.includes("moist_laundry")) {
+        moisture.push(
+          "Where possible, dry clothes outside or use a vented or condenser tumble dryer. If clothes must be dried indoors, do this in a well-ventilated room with the door closed and a window or fan running."
+        );
+      }
+      if (selected.includes("moist_noLids")) {
+        moisture.push(
+          "Use lids on pans when cooking and avoid leaving kettles and pans boiling for longer than necessary to reduce steam entering the room."
+        );
+      }
+      if (selected.includes("moist_bathSteam")) {
+        moisture.push(
+          "During baths and showers, keep the bathroom door closed and use the extract fan and/or window. Leave the fan running and window slightly open afterwards until steam has cleared."
+        );
+      }
+      if (selected.includes("moist_cookingLots")) {
+        moisture.push(
+          "When cooking, particularly when frying or boiling, use the extractor fan and, where safe to do so, open a window slightly to remove steam and smells."
+        );
+      }
+      if (selected.includes("moist_pets")) {
+        moisture.push(
+          "Be aware that pets, fish tanks and similar sources can add moisture to the air. Extra ventilation and steady heating will help manage this."
+        );
+      }
+
+      if (selected.includes("layout_furniture")) {
+        layout.push(
+          "Move large furniture such as wardrobes and sofas at least 50–100 mm away from external walls so that air can circulate behind them."
+        );
+      }
+      if (selected.includes("layout_bedExternal")) {
+        layout.push(
+          "Where possible, avoid having beds directly against cold external walls. Even a small gap between the bed and wall can help reduce mould risk."
+        );
+      }
+      if (selected.includes("layout_corners")) {
+        layout.push(
+          "Pay particular attention to corners and areas behind furniture, as these can be some of the coldest points in the room. Keeping them slightly warmer and well ventilated will reduce mould growth."
+        );
+      }
+
+      if (selected.includes("fans_weak")) {
+        ventilation.push(
+          "The existing extract fan may not be providing enough air flow. A higher performance, continuously running or dMEV-type fan may be beneficial."
+        );
+        technical.push(
+          "Low extract rates mean moisture remains in the room for longer, raising the relative humidity and increasing the chance of condensation on cold surfaces."
+        );
+      }
+      if (selected.includes("fans_noise")) {
+        behaviour.push(
+          "If fan noise is a concern, discuss options for quieter or continuously running fans so that moisture can be removed without causing disturbance."
+        );
+      }
+      if (selected.includes("fans_missing")) {
+        ventilation.push(
+          "The lack of a suitable extract fan in key moisture-producing rooms increases the risk of condensation. Installing effective mechanical extract ventilation should be considered."
+        );
+      }
+
+      if (selected.includes("occ_high")) {
+        behaviour.push(
+          "A higher number of people in the home means more moisture from breathing, cooking and washing. Steady heating and good ventilation become even more important."
+        );
+        technical.push(
+          "Each person adds moisture to the air, which increases the overall humidity level. Without enough ventilation and warmth, this moisture will settle on the coldest surfaces."
+        );
+      }
+
+      if (selected.includes("thermal_bridges")) {
+        technical.push(
+          "Cold spots and thermal bridges mean that some parts of the building surface are significantly colder than the surrounding areas, so they reach the dew point first and are more prone to mould."
+        );
+      }
+      if (selected.includes("thermal_poorInsul")) {
+        technical.push(
+          "Limited insulation can leave walls, ceilings and floors colder, which increases the likelihood of condensation when moist indoor air comes into contact with these surfaces."
+        );
+      }
+
+      if (!technical.length) {
+        technical.push(
+          "Warm air can hold more moisture than cold air. When moist air touches a surface that is at or below its dew point, water will condense out and, over time, can lead to mould growth if not managed."
+        );
+      }
+
+      return {
+        summary,
+        heating,
+        ventilation,
+        moisture,
+        layout,
+        behaviour,
+        technical
+      };
+    }
+
+    function renderAdviceSections(advice) {
+      const summaryEl = document.getElementById("adv_summary");
+      const sections = [
+        { id: "adv_heating", title: "Heating guidance", items: advice ? advice.heating : [] },
+        { id: "adv_ventilation", title: "Ventilation guidance", items: advice ? advice.ventilation : [] },
+        { id: "adv_moisture", title: "Moisture reduction", items: advice ? advice.moisture : [] },
+        { id: "adv_layout", title: "Furniture layout and cold walls", items: advice ? advice.layout : [] },
+        { id: "adv_behaviour", title: "Habits and daily routines", items: advice ? advice.behaviour : [] },
+        { id: "adv_technical", title: "Why this matters (technical summary)", items: advice ? advice.technical : [] }
+      ];
+
+      if (!advice) {
+        summaryEl.textContent = "Select the relevant issues above to generate a summary and specific advice.";
+        sections.forEach(sec => {
+          const el = document.getElementById(sec.id);
+          if (el) {
+            el.style.display = "none";
+            el.innerHTML = "";
+          }
+        });
+        return;
+      }
+
+      summaryEl.textContent = advice.summary;
+
+      sections.forEach(sec => {
+        const el = document.getElementById(sec.id);
+        if (!el) return;
+        if (!sec.items || !sec.items.length) {
+          el.style.display = "none";
+          el.innerHTML = "";
+          return;
+        }
+        el.style.display = "block";
+        el.innerHTML =
+          '<div class="adv-section-title">' + sec.title + '</div>' +
+          '<div class="adv-section-text">' +
+          sec.items.map(line => "• " + line).join("<br>") +
+          "</div>";
+      });
+    }
+
+    function updateAdvice() {
+      const advice = buildAdviceObject();
+      lastAdvice = advice;
+      renderAdviceSections(advice);
+    }
+
+    function resetAdviceForm() {
+      document.getElementById("adv_address").value = "";
+      document.getElementById("adv_tenant").value = "";
+      document.getElementById("adv_officer").value = "";
+      document.getElementById("adv_date").value = "";
+
+      const checks = document.querySelectorAll(".adv-check");
+      checks.forEach(el => { el.checked = false; });
+
+      lastAdvice = null;
+      renderAdviceSections(null);
+    }
+
+    /* ---------- PDF FOR OCCUPANT ADVICE ---------- */
+    async function downloadAdvicePdf() {
+      if (!lastAdvice) {
+        const adviceNow = buildAdviceObject();
+        if (!adviceNow) {
+          alert("Please tick at least one observed issue to generate advice before downloading the PDF.");
+          return;
+        }
+        lastAdvice = adviceNow;
+      }
+
+      if (!window.jspdf || !window.jspdf.jsPDF || !window.jspdf.jsPDF.API.autoTable) {
+        alert("PDF library not loaded. Please check your connection and try again.");
+        return;
+      }
+
+      const address = document.getElementById("adv_address").value || "-";
+      const tenant = document.getElementById("adv_tenant").value || "-";
+      const officer = document.getElementById("adv_officer").value || "-";
+      const visitDate = document.getElementById("adv_date").value || "-";
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+      const marginLeft = 12;
+      let cursorY = 18;
+
+      const logoDataUrl = await getLogoDataUrl();
+
+      doc.setFillColor(0, 91, 150);
+      doc.rect(0, 0, 210, 18, "F");
+
+      if (logoDataUrl) {
+        doc.addImage(logoDataUrl, "PNG", 6, 3, 12, 12);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(15);
+        doc.text("Occupant Advice Summary", 22, 12);
+      } else {
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text("Occupant Advice Summary", marginLeft, 12);
+      }
+
+      doc.setTextColor(0, 0, 0);
+      cursorY = 28;
+
+      doc.setFontSize(14);
+      doc.text("1. Property / case details", marginLeft, cursorY);
+      cursorY += 4;
+
+      doc.autoTable({
+        startY: cursorY,
+        theme: "grid",
+        headStyles: { fillColor: [0, 91, 150] },
+        styles: { fontSize: 11 },
+        head: [["Field", "Value"]],
+        body: [
+          ["Property address", address],
+          ["Occupant name", tenant],
+          ["Officer / surveyor", officer],
+          ["Visit date", visitDate]
+        ]
+      });
+
+      cursorY = doc.lastAutoTable.finalY + 10;
+
+      doc.setFontSize(14);
+      doc.text("2. Overall summary", marginLeft, cursorY);
+      cursorY += 6;
+
+      doc.setFontSize(11);
+      const maxWidth = 180;
+      const wrappedSummary = doc.splitTextToSize(lastAdvice.summary, maxWidth);
+      doc.text(wrappedSummary, marginLeft, cursorY);
+      cursorY += wrappedSummary.length * 5 + 6;
+
+      function addAdviceSection(title, items) {
+        if (!items || !items.length) return;
+        if (cursorY > 260) {
+          doc.addPage();
+          cursorY = 18;
+        }
+        doc.setFontSize(14);
+        doc.text(title, marginLeft, cursorY);
+        cursorY += 4;
+
+        doc.autoTable({
+          startY: cursorY,
+          theme: "grid",
+          headStyles: { fillColor: [0, 91, 150] },
+          styles: { fontSize: 10 },
+          head: [["Advice"]],
+          body: items.map(line => [line]),
+          columnStyles: { 0: { cellWidth: 180 } }
+        });
+
+        cursorY = doc.lastAutoTable.finalY + 6;
+      }
+
+      addAdviceSection("3. Heating guidance", lastAdvice.heating);
+      addAdviceSection("4. Ventilation guidance", lastAdvice.ventilation);
+      addAdviceSection("5. Moisture reduction", lastAdvice.moisture);
+      addAdviceSection("6. Furniture layout and cold walls", lastAdvice.layout);
+      addAdviceSection("7. Habits and daily routines", lastAdvice.behaviour);
+      addAdviceSection("8. Why this matters (technical summary)", lastAdvice.technical);
+
+      doc.setFontSize(9);
+      doc.setTextColor(100);
+      doc.text(
+        "Generated by CM Toolbox – Occupant Advice Generator • © Your Name / Company",
+        marginLeft,
+        290
+      );
+
+      doc.save("occupant-advice-summary.pdf");
+    }
+
     /* ---------- EVENT LISTENERS ---------- */
     document.addEventListener("input", e => {
-      // Condensation tool
       if (
         e.target.matches("select") ||
         e.target.matches("#roomWidth") ||
@@ -1930,7 +2437,6 @@
         }
       }
 
-      // Air test
       if (
         e.target.matches("#at_length") ||
         e.target.matches("#at_width") ||
@@ -1941,7 +2447,6 @@
         calcAirTest();
       }
 
-      // Moisture diagnosis
       if (
         e.target.classList.contains("md-symptom") ||
         e.target.id === "md_age" ||
@@ -1951,7 +2456,6 @@
         calcMoistureDiagnosis();
       }
 
-      // Heat loss
       if (
         e.target.id === "hl_length" ||
         e.target.id === "hl_width" ||
@@ -1966,6 +2470,16 @@
         e.target.id === "hl_uroof"
       ) {
         calcHeatLoss();
+      }
+
+      if (
+        e.target.classList.contains("adv-check") ||
+        e.target.id === "adv_address" ||
+        e.target.id === "adv_tenant" ||
+        e.target.id === "adv_officer" ||
+        e.target.id === "adv_date"
+      ) {
+        updateAdvice();
       }
     });
 
@@ -1998,6 +2512,7 @@
     // Initial run
     calc();
     loadSavedRooms();
+    renderAdviceSections(null);
   </script>
 </body>
 </html>
